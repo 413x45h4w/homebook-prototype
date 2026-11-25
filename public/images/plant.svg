@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Fiddle leaf fig by a window">
+  <rect width="800" height="600" fill="#e7dcc8"/>
+  <rect x="90" y="48" width="620" height="500" rx="18" fill="#f6f1e6"/>
+  <rect x="430" y="80" width="230" height="360" fill="#d5e4ea"/>
+  <rect x="430" y="80" width="16" height="360" fill="#f7f1e6"/>
+  <rect x="538" y="80" width="16" height="360" fill="#f7f1e6"/>
+  <rect x="430" y="200" width="230" height="16" fill="#f7f1e6"/>
+  <rect x="250" y="360" width="150" height="120" rx="10" fill="#c4622d"/>
+  <rect x="230" y="470" width="190" height="22" rx="6" fill="#8d4b24"/>
+  <rect x="318" y="230" width="12" height="140" fill="#3e6b45"/>
+  <ellipse cx="280" cy="250" rx="70" ry="36" fill="#2f6b45" transform="rotate(-20 280 250)"/>
+  <ellipse cx="380" cy="230" rx="74" ry="34" fill="#3f7d52" transform="rotate(18 380 230)"/>
+  <ellipse cx="330" cy="180" rx="46" ry="64" fill="#24563a"/>
+</svg>

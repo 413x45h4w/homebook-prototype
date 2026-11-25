@@ -1,0 +1,1100 @@
+{
+  "customerId": "client-alex",
+  "clients": [
+    {
+      "id": "client-alex",
+      "name": "Alex Chen",
+      "shortName": "Alex",
+      "address": "412 West 22nd Street, Apt 4B",
+      "neighborhood": "Chelsea",
+      "cityLine": "New York, NY 10011",
+      "lat": 40.74605,
+      "lng": -74.00095,
+      "phone": "917-555-0188",
+      "accessNote": "Street door code 1948#, then buzz 4B. Full household file is in Homebook.",
+      "fullKnowledgeBase": true
+    },
+    {
+      "id": "client-priya",
+      "name": "Priya Shah",
+      "shortName": "Priya",
+      "address": "142 Java Street",
+      "neighborhood": "Greenpoint",
+      "cityLine": "Brooklyn, NY 11222",
+      "lat": 40.73115,
+      "lng": -73.95455,
+      "phone": "718-555-0114",
+      "accessNote": "Garden-level gate code 1908. The dog's name is Noodle. Shoes off.",
+      "fullKnowledgeBase": false
+    },
+    {
+      "id": "client-noah",
+      "name": "Noah Kim",
+      "shortName": "Noah",
+      "address": "15 Grove Street, Apt 3",
+      "neighborhood": "West Village",
+      "cityLine": "New York, NY 10014",
+      "lat": 40.73355,
+      "lng": -74.00215,
+      "phone": "212-555-0166",
+      "accessNote": "Buzzer 3. Third-floor walk-up. Shoes off. Leash is on the radiator.",
+      "fullKnowledgeBase": false
+    },
+    {
+      "id": "client-elena",
+      "name": "Elena Voss",
+      "shortName": "Elena",
+      "address": "90 Bedford Avenue, Apt 7A",
+      "neighborhood": "Williamsburg",
+      "cityLine": "Brooklyn, NY 11249",
+      "lat": 40.71885,
+      "lng": -73.95705,
+      "phone": "347-555-0190",
+      "accessNote": "Doorman building. Ask for Voss in 7A. Dog water bowl is by the window.",
+      "fullKnowledgeBase": false
+    },
+    {
+      "id": "client-maya",
+      "name": "Maya Ortiz",
+      "shortName": "Maya",
+      "address": "55 Pierrepont Street",
+      "neighborhood": "Brooklyn Heights",
+      "cityLine": "Brooklyn, NY 11201",
+      "lat": 40.69515,
+      "lng": -73.99345,
+      "phone": "718-555-0133",
+      "accessNote": "Brownstone. Key under the left planter — put it back. Recycling is in the areaway.",
+      "fullKnowledgeBase": false
+    },
+    {
+      "id": "client-ben",
+      "name": "Ben Adler",
+      "shortName": "Ben",
+      "address": "200 East 16th Street, Apt 4",
+      "neighborhood": "Gramercy",
+      "cityLine": "New York, NY 10003",
+      "lat": 40.73485,
+      "lng": -73.98535,
+      "phone": "212-555-0148",
+      "accessNote": "Elevator to 4. The piano is in the front room. Please don't move the bench.",
+      "fullKnowledgeBase": false
+    },
+    {
+      "id": "client-chris",
+      "name": "Chris Adeyemi",
+      "shortName": "Chris",
+      "address": "88 Christopher Street",
+      "neighborhood": "West Village",
+      "cityLine": "New York, NY 10014",
+      "lat": 40.73335,
+      "lng": -74.00355,
+      "phone": "917-555-0120",
+      "accessNote": "Walk-up, bell says Adeyemi. Supplies are under the sink.",
+      "fullKnowledgeBase": false
+    },
+    {
+      "id": "client-ruth",
+      "name": "Ruth Feldman",
+      "shortName": "Ruth",
+      "address": "1 West 72nd Street",
+      "neighborhood": "Upper West Side",
+      "cityLine": "New York, NY 10023",
+      "lat": 40.77645,
+      "lng": -73.97605,
+      "phone": "212-555-0174",
+      "accessNote": "Tell the doorman you are here for Feldman. Leave lesson books on the bench.",
+      "fullKnowledgeBase": false
+    }
+  ],
+  "providers": [
+    {
+      "id": "sp-maria",
+      "name": "Maria Alvarez",
+      "kind": "cleaner",
+      "service": "Cleaning",
+      "bio": "Comes when the week gets away from you. Knows the fiddle leaf and the espresso machine.",
+      "rate": 145,
+      "durationMin": 180,
+      "venmo": "maria-cleans",
+      "zelle": "maria.alvarez@email.test",
+      "phone": "917-555-0164",
+      "active": true,
+      "bookable": true,
+      "color": "#1f4d3c",
+      "slotTemplates": [
+        { "days": [0, 1, 2, 3, 4, 5, 6], "start": "08:00", "end": "11:00" },
+        { "days": [0, 1, 2, 3, 4, 5, 6], "start": "13:00", "end": "16:00" }
+      ]
+    },
+    {
+      "id": "sp-jordan",
+      "name": "Jordan Hale",
+      "kind": "dog_walker",
+      "service": "Dog walking",
+      "bio": "Midday walks. Knows Miso would rather see the river than 10th Avenue.",
+      "rate": 28,
+      "durationMin": 30,
+      "venmo": "jordanwalks",
+      "zelle": "917-555-0142",
+      "phone": "917-555-0142",
+      "active": true,
+      "bookable": true,
+      "color": "#b85a2a",
+      "slotTemplates": [
+        { "days": [0, 1, 2, 3, 4, 5, 6], "start": "08:00", "end": "08:30" },
+        { "days": [0, 1, 2, 3, 4, 5, 6], "start": "09:00", "end": "09:30" },
+        { "days": [0, 1, 2, 3, 4, 5, 6], "start": "12:00", "end": "12:30" },
+        { "days": [0, 1, 2, 3, 4, 5, 6], "start": "15:00", "end": "15:30" },
+        { "days": [0, 1, 2, 3, 4, 5, 6], "start": "17:30", "end": "18:00" }
+      ]
+    },
+    {
+      "id": "sp-sam",
+      "name": "Sam Okonkwo",
+      "kind": "dog_walker",
+      "service": "Dog walking",
+      "bio": "Walked Miso last year. The feeding note started in Sam's thread, and it still travels with the dog.",
+      "rate": 25,
+      "durationMin": 30,
+      "venmo": "samwalksnyc",
+      "zelle": "917-555-0177",
+      "phone": "917-555-0177",
+      "active": false,
+      "bookable": false,
+      "color": "#6b5a45",
+      "slotTemplates": []
+    },
+    {
+      "id": "sp-lena",
+      "name": "Lena Petrov",
+      "kind": "piano_teacher",
+      "service": "Piano lesson",
+      "bio": "Thursday lessons. Bach first, Chopin when the hand is loose.",
+      "rate": 85,
+      "durationMin": 45,
+      "venmo": "lenapiano",
+      "zelle": "lena.petrov@email.test",
+      "phone": "646-555-0198",
+      "active": true,
+      "bookable": true,
+      "color": "#3d3a7a",
+      "slotTemplates": [
+        { "days": [4], "start": "16:00", "end": "16:45" },
+        { "days": [4], "start": "17:15", "end": "18:00" },
+        { "days": [4], "start": "18:30", "end": "19:15" }
+      ]
+    }
+  ],
+  "items": [
+    {
+      "id": "kb-door",
+      "title": "Street door and buzzer",
+      "category": "apartment_access",
+      "dayOffset": -80,
+      "time": "09:00",
+      "body": "The street door code is 1948#. Then buzz 4B — I'll hear it if I'm home. After 4pm on weekdays, and all weekend, the desk is empty, so use the code and come straight up. Please don't prop the street door.",
+      "images": []
+    },
+    {
+      "id": "kb-lockbox",
+      "title": "Spare key in the lockbox",
+      "category": "apartment_access",
+      "dayOffset": -80,
+      "time": "09:10",
+      "body": "Black lockbox on the stairwell railing, just past 4B. Code 4421. The spare is the brass key. Lock it back in before you leave, even if you're only out for a minute with the dog. The doorman knows the box is ours.",
+      "images": [
+        {
+          "id": "img-lockbox",
+          "src": "images/lockbox.svg",
+          "caption": "Black lockbox on the stairwell railing, just past 4B."
+        }
+      ]
+    },
+    {
+      "id": "kb-doorman",
+      "title": "What to tell the doorman",
+      "category": "apartment_access",
+      "dayOffset": -70,
+      "time": "11:00",
+      "body": "Luis covers weekdays until 4. Andre covers Saturday morning. Say you are here for Alex Chen in 4B — a first name alone isn't enough and they will not send you up. If the desk is empty, the door code still works.",
+      "images": []
+    },
+    {
+      "id": "kb-wifi",
+      "title": "Wi-Fi",
+      "category": "wifi",
+      "dayOffset": -70,
+      "time": "11:20",
+      "body": "Network: ChenNest. Password: marigold-22, all lower case. If a video call stutters, ChenGuest / guest22 is the older router and it's fine for maps and music.",
+      "images": []
+    },
+    {
+      "id": "kb-emergency",
+      "title": "If something goes wrong",
+      "category": "emergency",
+      "dayOffset": -60,
+      "time": "08:30",
+      "body": "Alex, 917-555-0188. The super is Mr. Ruiz in the basement, 212-555-0160. Building emergency line 212-555-0100. Nearest ER is Lenox Health Greenwich Village, about a ten-minute walk west.\n\nMiso's vet is Village Vet on Hudson, 212-555-0194. The carrier is on top of the hall closet.",
+      "images": []
+    },
+    {
+      "id": "kb-dont",
+      "title": "Leave these alone",
+      "category": "do_not_touch",
+      "dayOffset": -55,
+      "time": "14:00",
+      "body": "The oak desk in the living room, the vinyl crates beside it, and the framed print over the piano. Please don't straighten that print — it was hung off on purpose.\n\nStreet-facing blinds stay half down when you leave. The bedroom blackout stays up.",
+      "images": []
+    },
+    {
+      "id": "kb-quiet",
+      "title": "Quiet hours for 4A",
+      "category": "do_not_touch",
+      "dayOffset": -65,
+      "time": "19:00",
+      "body": "The neighbor in 4A works nights and sleeps through the morning. No vacuum before 10am or after 7pm. The dishwasher is fine anytime. If Miso barks at the door, a hand on her chest usually ends it.",
+      "images": []
+    },
+    {
+      "id": "kb-shoes",
+      "title": "Shoes off",
+      "category": "general",
+      "dayOffset": -50,
+      "time": "12:00",
+      "body": "Shoes come off on the tray inside the door. The floors were refinished in March and a heel mark shows. Slippers are in the basket if you want them.",
+      "images": []
+    },
+    {
+      "id": "kb-miso",
+      "title": "Miso — harness, not the collar",
+      "category": "pets",
+      "dayOffset": -70,
+      "time": "13:00",
+      "source": { "messageId": "msg-jordan-2", "threadId": "thread-jordan", "spId": "sp-jordan" },
+      "body": "Miso is a four-year-old shiba. She is polite with people and opinionated about pigeons. The blue harness hangs on the hook by the door — use that, not the collar. The collar is only there so she has a tag. She pulls toward the river. A thirty-minute loop that includes the pier is the good walk.\n\nShe slipped a collar on 10th Avenue last year. That is why the harness is the rule, for Jordan and for whoever walks her next.",
+      "images": [
+        {
+          "id": "img-harness",
+          "src": "images/harness.svg",
+          "caption": "Blue harness on the hook by the door. Use this, not the collar."
+        }
+      ]
+    },
+    {
+      "id": "kb-feeding",
+      "title": "Feeding — one cup, and only after 5",
+      "category": "pets",
+      "dayOffset": -32,
+      "time": "20:12",
+      "source": { "messageId": "msg-sam-2", "threadId": "thread-sam", "spId": "sp-sam" },
+      "body": "One cup of the salmon kibble, from the glass jar on the lower open shelf, with a splash of warm water. Only on walks that end after 5pm. Morning and midday walkers leave the bowl alone.\n\nThe tin on the counter is guest treats and they upset her stomach. This note started after a walk with Sam, when a second cup made her sick. It applies to every walker, not just Sam.",
+      "images": []
+    },
+    {
+      "id": "kb-pill",
+      "title": "Evening pill",
+      "category": "pets",
+      "dayOffset": -12,
+      "time": "18:40",
+      "body": "Apoquel is in the cabinet above the sink, left of the mugs. Half a tablet in a piece of cheese, on the evening walk only. The morning walker skips it. If she spits it out, leave the half on the saucer and text Alex.",
+      "images": []
+    },
+    {
+      "id": "kb-laundry",
+      "title": "How to run the laundry",
+      "category": "laundry",
+      "dayOffset": -45,
+      "time": "10:15",
+      "body": "Towels on hot. Everything else cold. Detergent is the unscented jug under the kitchen sink — one short pour, not a full cap. Skip the dryer sheets; the box under the sink is for guests who ask. The linen shirt gets a hanger, not the tumble dryer.",
+      "images": []
+    },
+    {
+      "id": "kb-folding",
+      "title": "Hamper and folding",
+      "category": "laundry",
+      "dayOffset": -45,
+      "time": "10:20",
+      "body": "The hamper is in the bedroom closet, left side. Fold on the bed in three stacks: lights, darks, towels. Alex puts them away. Please don't put clean clothes back in the hamper to be helpful.",
+      "images": []
+    },
+    {
+      "id": "kb-kitchen",
+      "title": "Kitchen and the espresso machine",
+      "category": "kitchen",
+      "dayOffset": -5,
+      "time": "18:20",
+      "source": { "messageId": "msg-maria-2", "threadId": "thread-maria", "spId": "sp-maria" },
+      "body": "Load the dishwasher. Don't start it if it's less than half full. Wipe the espresso machine with a dry cloth only — the steam wand spots if it's wet.\n\nCompost under the sink goes out when it's past half. The chute is at the end of the hall, not the trash room.",
+      "images": [
+        {
+          "id": "img-espresso",
+          "src": "images/espresso.svg",
+          "caption": "Wipe the espresso machine with a dry cloth only."
+        }
+      ]
+    },
+    {
+      "id": "kb-plants",
+      "title": "Plants",
+      "category": "plants",
+      "dayOffset": -28,
+      "time": "09:40",
+      "body": "The fiddle leaf by the south window gets one cup only if the soil is dry an inch down. The succulents on the sill are on their own, even if they look dramatic. Please don't mist anything near the piano.",
+      "images": [
+        {
+          "id": "img-plant",
+          "src": "images/plant.svg",
+          "caption": "One cup for the fiddle leaf, and only if the soil is dry an inch down."
+        }
+      ]
+    },
+    {
+      "id": "kb-vacuum",
+      "title": "Where the vacuum lives",
+      "category": "supplies",
+      "dayOffset": -22,
+      "time": "16:05",
+      "body": "Hall closet, bottom, behind the winter boots. The wand clips to the inside of the door. Empty the cup into the chute if it's past the line — not into the kitchen trash. No vacuum before 10am; 4A is asleep.",
+      "images": [
+        {
+          "id": "img-vacuum",
+          "src": "images/vacuum.svg",
+          "caption": "This is where the vacuum lives."
+        }
+      ]
+    },
+    {
+      "id": "kb-caddy",
+      "title": "Cleaning caddy and towels",
+      "category": "supplies",
+      "dayOffset": -22,
+      "time": "16:12",
+      "body": "The caddy is under the bathroom sink. The clear bottle is a vinegar mix for the floors. The blue bottle is glass only. The green soap is for hands; the white pump is face wash, please leave it.\n\nExtra hand towels are in the linen closet, second shelf. Swap the hand towel if it's damp.",
+      "images": []
+    },
+    {
+      "id": "kb-trash",
+      "title": "Trash and recycling",
+      "category": "supplies",
+      "dayOffset": -18,
+      "time": "15:00",
+      "body": "Kitchen trash goes down the chute by the elevator. Recycling is the blue bin in the basement. The basement door uses the same code as the street door. Break boxes down. Bottles go in with the caps off — fussy, and it's what the building asked for.",
+      "images": []
+    },
+    {
+      "id": "kb-piano",
+      "title": "The piano",
+      "category": "piano",
+      "dayOffset": -16,
+      "time": "17:00",
+      "body": "It's a Yamaha U1. The bench height is set; please leave the felt alone. Sheet music for the week stays on the stand. The metronome is inside the bench. A glass of water is fine. No mugs on the lid, ever.",
+      "images": [
+        {
+          "id": "img-piano",
+          "src": "images/piano.svg",
+          "caption": "Yamaha U1. No mugs on the lid."
+        }
+      ]
+    },
+    {
+      "id": "kb-practice",
+      "title": "What we're working on",
+      "category": "piano",
+      "dayOffset": -8,
+      "time": "21:05",
+      "source": { "messageId": "msg-lena-2", "threadId": "thread-lena", "spId": "sp-lena" },
+      "body": "Bach Invention in F, then the first Chopin nocturne if the hand is loose. Please don't assign new scales until the F major is clean. Recording on your phone is welcome.\n\nAlex practices after 8pm, so the bench may have moved. Slide it back to the dent in the rug.",
+      "images": []
+    }
+  ],
+  "threads": [
+    { "id": "thread-maria", "spId": "sp-maria", "clientId": "client-alex" },
+    { "id": "thread-jordan", "spId": "sp-jordan", "clientId": "client-alex" },
+    { "id": "thread-sam", "spId": "sp-sam", "clientId": "client-alex" },
+    { "id": "thread-lena", "spId": "sp-lena", "clientId": "client-alex" }
+  ],
+  "messages": [
+    {
+      "id": "msg-maria-1",
+      "threadId": "thread-maria",
+      "from": "provider",
+      "dayOffset": -5,
+      "time": "18:02",
+      "body": "Running a few minutes late tomorrow — the train sat at Bedford. I'll still do the full three hours."
+    },
+    {
+      "id": "msg-maria-2",
+      "threadId": "thread-maria",
+      "from": "customer",
+      "dayOffset": -5,
+      "time": "18:20",
+      "savedAsKbItemId": "kb-kitchen",
+      "body": "Please always wipe the espresso machine with a dry cloth only. The steam wand spots if it's wet."
+    },
+    {
+      "id": "msg-maria-3",
+      "threadId": "thread-maria",
+      "from": "provider",
+      "dayOffset": -5,
+      "time": "18:28",
+      "body": "Dry cloth only. I won't run the dishwasher if it's half empty either."
+    },
+    {
+      "id": "msg-maria-4",
+      "threadId": "thread-maria",
+      "from": "customer",
+      "dayOffset": -1,
+      "time": "16:40",
+      "body": "Thank you for today. The fiddle leaf looks happier than I left it."
+    },
+    {
+      "id": "msg-maria-5",
+      "threadId": "thread-maria",
+      "from": "provider",
+      "dayOffset": -1,
+      "time": "17:05",
+      "body": "Soil was dry an inch down, so it got one cup. Blinds are half down."
+    },
+    {
+      "id": "msg-jordan-1",
+      "threadId": "thread-jordan",
+      "from": "provider",
+      "dayOffset": -3,
+      "time": "12:40",
+      "body": "River loop today. She argued with a pigeon and lost interest."
+    },
+    {
+      "id": "msg-jordan-2",
+      "threadId": "thread-jordan",
+      "from": "customer",
+      "dayOffset": -3,
+      "time": "12:55",
+      "savedAsKbItemId": "kb-miso",
+      "body": "Please always use the harness, not the collar. She slipped a collar on 10th Ave last year."
+    },
+    {
+      "id": "msg-jordan-3",
+      "threadId": "thread-jordan",
+      "from": "provider",
+      "dayOffset": -3,
+      "time": "13:02",
+      "body": "Blue harness on the hook. Collar stays for the tag only. Understood."
+    },
+    {
+      "id": "msg-jordan-4",
+      "threadId": "thread-jordan",
+      "from": "customer",
+      "dayOffset": -1,
+      "time": "18:10",
+      "body": "Please always text me if she refuses the harness and you end up using the collar."
+    },
+    {
+      "id": "msg-jordan-5",
+      "threadId": "thread-jordan",
+      "from": "provider",
+      "dayOffset": 0,
+      "time": "07:50",
+      "body": "Heading up for the morning walk. I'll wave at Luis if he's already at the desk."
+    },
+    {
+      "id": "msg-jordan-6",
+      "threadId": "thread-jordan",
+      "from": "customer",
+      "dayOffset": 0,
+      "time": "07:40",
+      "body": "Could you add a walk two days from now, after 5, so she gets the evening pill? Morning is already covered.",
+      "proposal": {
+        "kind": "booking",
+        "status": "pending",
+        "slots": [{ "dayOffset": 2, "start": "17:30", "end": "18:00" }]
+      }
+    },
+    {
+      "id": "msg-sam-1",
+      "threadId": "thread-sam",
+      "from": "provider",
+      "dayOffset": -32,
+      "time": "17:50",
+      "body": "Dropped Miso off and filled her bowl."
+    },
+    {
+      "id": "msg-sam-2",
+      "threadId": "thread-sam",
+      "from": "customer",
+      "dayOffset": -32,
+      "time": "20:12",
+      "savedAsKbItemId": "kb-feeding",
+      "body": "Please only feed one cup of the salmon kibble, and only on walks after 5. She was sick after the extra cup last time."
+    },
+    {
+      "id": "msg-sam-3",
+      "threadId": "thread-sam",
+      "from": "provider",
+      "dayOffset": -32,
+      "time": "20:40",
+      "body": "I'm sorry about that. One cup, after 5, from the glass jar. I won't touch the counter tin."
+    },
+    {
+      "id": "msg-sam-4",
+      "threadId": "thread-sam",
+      "from": "customer",
+      "dayOffset": -30,
+      "time": "09:00",
+      "body": "Thanks for being careful on the last walk. We're going to pause for a bit."
+    },
+    {
+      "id": "msg-lena-1",
+      "threadId": "thread-lena",
+      "from": "provider",
+      "dayOffset": -8,
+      "time": "19:20",
+      "body": "The invention was cleaner today. The left hand still rushes the second bar."
+    },
+    {
+      "id": "msg-lena-2",
+      "threadId": "thread-lena",
+      "from": "customer",
+      "dayOffset": -8,
+      "time": "21:05",
+      "savedAsKbItemId": "kb-practice",
+      "body": "Please don't assign new scales until the F major is clean. The Chopin can wait."
+    },
+    {
+      "id": "msg-lena-3",
+      "threadId": "thread-lena",
+      "from": "provider",
+      "dayOffset": -8,
+      "time": "21:18",
+      "body": "No new scales. Metronome stays in the bench, and I won't put a mug on the lid."
+    },
+    {
+      "id": "msg-lena-4",
+      "threadId": "thread-lena",
+      "from": "customer",
+      "dayOffset": -2,
+      "time": "11:00",
+      "body": "Can we keep Thursday at 5:15?"
+    },
+    {
+      "id": "msg-lena-5",
+      "threadId": "thread-lena",
+      "from": "provider",
+      "dayOffset": -2,
+      "time": "11:12",
+      "body": "Thursday at 5:15 is yours. I'll be coming from the Upper West Side."
+    },
+    {
+      "id": "msg-lena-6",
+      "threadId": "thread-lena",
+      "from": "provider",
+      "dayOffset": -1,
+      "time": "09:12",
+      "body": "Could we move Thursday's lesson? Rehearsal runs into 5:15. I can do 6:30 this Thursday, or 6:30 the Thursday after.",
+      "proposal": {
+        "kind": "reschedule",
+        "status": "proposed",
+        "visitId": "visit-lena-alex-next",
+        "slots": [
+          { "nthWeekday": 4, "which": 0, "start": "18:30", "end": "19:15" },
+          { "nthWeekday": 4, "which": 1, "start": "18:30", "end": "19:15" }
+        ]
+      }
+    }
+  ],
+  "visits": [
+    {
+      "id": "visit-maria-alex-a",
+      "spId": "sp-maria",
+      "clientId": "client-alex",
+      "dayOffset": -18,
+      "start": "13:00",
+      "end": "16:00",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "amount": 145,
+      "feedback": {
+        "rating": 4,
+        "comment": "Thorough in the kitchen. Missed under the bed.",
+        "themes": ["Missed under the bed", "Careful in the kitchen"]
+      }
+    },
+    {
+      "id": "visit-maria-alex-b",
+      "spId": "sp-maria",
+      "clientId": "client-alex",
+      "dayOffset": -11,
+      "start": "13:00",
+      "end": "16:00",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "amount": 145,
+      "feedback": {
+        "rating": 5,
+        "comment": "The plants looked better than I manage. Under the bed was still dusty.",
+        "themes": ["Missed under the bed", "Great with plants"]
+      }
+    },
+    {
+      "id": "visit-maria-alex-c",
+      "spId": "sp-maria",
+      "clientId": "client-alex",
+      "dayOffset": -1,
+      "start": "13:00",
+      "end": "16:00",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "amount": 145,
+      "feedback": {
+        "rating": 5,
+        "comment": "Best one yet. Blinds half down, espresso machine dry, fiddle leaf watered properly.",
+        "themes": ["Great with plants", "Left the place as asked"]
+      }
+    },
+    {
+      "id": "visit-maria-priya-m2",
+      "spId": "sp-maria",
+      "clientId": "client-priya",
+      "dayOffset": -2,
+      "start": "08:00",
+      "end": "11:00",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "amount": 145
+    },
+    {
+      "id": "visit-maria-elena-m2",
+      "spId": "sp-maria",
+      "clientId": "client-elena",
+      "dayOffset": -2,
+      "start": "13:00",
+      "end": "16:00",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "amount": 145
+    },
+    {
+      "id": "visit-maria-maya-0",
+      "spId": "sp-maria",
+      "clientId": "client-maya",
+      "dayOffset": 0,
+      "start": "09:00",
+      "end": "12:00",
+      "status": "scheduled",
+      "paymentStatus": "unpaid",
+      "amount": 145
+    },
+    {
+      "id": "visit-maria-ruth-0",
+      "spId": "sp-maria",
+      "clientId": "client-ruth",
+      "dayOffset": 0,
+      "start": "12:15",
+      "end": "15:15",
+      "status": "scheduled",
+      "paymentStatus": "unpaid",
+      "amount": 145
+    },
+    {
+      "id": "visit-maria-alex-next",
+      "spId": "sp-maria",
+      "clientId": "client-alex",
+      "dayOffset": 1,
+      "start": "13:00",
+      "end": "16:00",
+      "status": "scheduled",
+      "paymentStatus": "unpaid",
+      "amount": 145
+    },
+    {
+      "id": "visit-maria-chris-2",
+      "spId": "sp-maria",
+      "clientId": "client-chris",
+      "dayOffset": 2,
+      "start": "08:00",
+      "end": "11:00",
+      "status": "scheduled",
+      "paymentStatus": "unpaid",
+      "amount": 145
+    },
+    {
+      "id": "visit-maria-priya-2",
+      "spId": "sp-maria",
+      "clientId": "client-priya",
+      "dayOffset": 2,
+      "start": "13:00",
+      "end": "16:00",
+      "status": "scheduled",
+      "paymentStatus": "unpaid",
+      "amount": 145
+    },
+    {
+      "id": "visit-jordan-alex-a",
+      "spId": "sp-jordan",
+      "clientId": "client-alex",
+      "dayOffset": -9,
+      "start": "12:00",
+      "end": "12:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "amount": 28,
+      "feedback": {
+        "rating": 5,
+        "comment": "River loop. She came home tired and pleased.",
+        "themes": ["Miso came back happy"]
+      }
+    },
+    {
+      "id": "visit-jordan-alex-b",
+      "spId": "sp-jordan",
+      "clientId": "client-alex",
+      "dayOffset": -3,
+      "start": "17:30",
+      "end": "18:00",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "amount": 28,
+      "feedback": {
+        "rating": 4,
+        "comment": "Good walk. The evening pill was still on the saucer when I got home.",
+        "themes": ["Forgot the evening pill"]
+      }
+    },
+    {
+      "id": "visit-jordan-alex-c",
+      "spId": "sp-jordan",
+      "clientId": "client-alex",
+      "dayOffset": -1,
+      "start": "17:30",
+      "end": "18:00",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "amount": 28,
+      "feedback": {
+        "rating": 5,
+        "comment": "Harness on without a reminder. Pier loop, and she came home happy.",
+        "themes": ["Used the harness", "Miso came back happy"]
+      }
+    },
+    {
+      "id": "visit-jordan-noah-m2",
+      "spId": "sp-jordan",
+      "clientId": "client-noah",
+      "dayOffset": -2,
+      "start": "08:00",
+      "end": "08:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "amount": 28
+    },
+    {
+      "id": "visit-jordan-elena-m2",
+      "spId": "sp-jordan",
+      "clientId": "client-elena",
+      "dayOffset": -2,
+      "start": "12:00",
+      "end": "12:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "amount": 28
+    },
+    {
+      "id": "visit-jordan-alex-0",
+      "spId": "sp-jordan",
+      "clientId": "client-alex",
+      "dayOffset": 0,
+      "start": "08:00",
+      "end": "08:30",
+      "status": "scheduled",
+      "paymentStatus": "unpaid",
+      "amount": 28
+    },
+    {
+      "id": "visit-jordan-priya-0",
+      "spId": "sp-jordan",
+      "clientId": "client-priya",
+      "dayOffset": 0,
+      "start": "08:38",
+      "end": "09:08",
+      "status": "scheduled",
+      "paymentStatus": "unpaid",
+      "amount": 28
+    },
+    {
+      "id": "visit-jordan-noah-0",
+      "spId": "sp-jordan",
+      "clientId": "client-noah",
+      "dayOffset": 0,
+      "start": "12:00",
+      "end": "12:30",
+      "status": "scheduled",
+      "paymentStatus": "unpaid",
+      "amount": 28
+    },
+    {
+      "id": "visit-jordan-elena-0",
+      "spId": "sp-jordan",
+      "clientId": "client-elena",
+      "dayOffset": 0,
+      "start": "15:00",
+      "end": "15:30",
+      "status": "scheduled",
+      "paymentStatus": "unpaid",
+      "amount": 28
+    },
+    {
+      "id": "visit-jordan-maya-0",
+      "spId": "sp-jordan",
+      "clientId": "client-maya",
+      "dayOffset": 0,
+      "start": "17:30",
+      "end": "18:00",
+      "status": "scheduled",
+      "paymentStatus": "unpaid",
+      "amount": 28
+    },
+    {
+      "id": "visit-jordan-alex-1",
+      "spId": "sp-jordan",
+      "clientId": "client-alex",
+      "dayOffset": 1,
+      "start": "12:00",
+      "end": "12:30",
+      "status": "scheduled",
+      "paymentStatus": "unpaid",
+      "amount": 28
+    },
+    {
+      "id": "visit-jordan-noah-1",
+      "spId": "sp-jordan",
+      "clientId": "client-noah",
+      "dayOffset": 1,
+      "start": "15:00",
+      "end": "15:30",
+      "status": "scheduled",
+      "paymentStatus": "unpaid",
+      "amount": 28
+    },
+    {
+      "id": "visit-jordan-priya-1",
+      "spId": "sp-jordan",
+      "clientId": "client-priya",
+      "dayOffset": 1,
+      "start": "17:30",
+      "end": "18:00",
+      "status": "scheduled",
+      "paymentStatus": "unpaid",
+      "amount": 28
+    },
+    {
+      "id": "visit-jordan-elena-2",
+      "spId": "sp-jordan",
+      "clientId": "client-elena",
+      "dayOffset": 2,
+      "start": "09:00",
+      "end": "09:30",
+      "status": "scheduled",
+      "paymentStatus": "unpaid",
+      "amount": 28
+    },
+    {
+      "id": "visit-jordan-maya-2",
+      "spId": "sp-jordan",
+      "clientId": "client-maya",
+      "dayOffset": 2,
+      "start": "15:00",
+      "end": "15:30",
+      "status": "scheduled",
+      "paymentStatus": "unpaid",
+      "amount": 28
+    },
+    {
+      "id": "visit-sam-alex-a",
+      "spId": "sp-sam",
+      "clientId": "client-alex",
+      "dayOffset": -45,
+      "start": "17:00",
+      "end": "17:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "amount": 25,
+      "feedback": {
+        "rating": 3,
+        "comment": "Short loop and she was still full of energy. Felt rushed.",
+        "themes": ["Felt rushed"]
+      }
+    },
+    {
+      "id": "visit-sam-priya",
+      "spId": "sp-sam",
+      "clientId": "client-priya",
+      "dayOffset": -40,
+      "start": "12:00",
+      "end": "12:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "amount": 25
+    },
+    {
+      "id": "visit-sam-alex-b",
+      "spId": "sp-sam",
+      "clientId": "client-alex",
+      "dayOffset": -32,
+      "start": "17:00",
+      "end": "17:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "amount": 25,
+      "feedback": {
+        "rating": 3,
+        "comment": "She was sick that night. The bowl had been filled past one cup.",
+        "themes": ["Fed the wrong amount"]
+      }
+    },
+    {
+      "id": "visit-lena-alex-a",
+      "spId": "sp-lena",
+      "clientId": "client-alex",
+      "dayOffset": -15,
+      "start": "17:15",
+      "end": "18:00",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "amount": 85,
+      "feedback": {
+        "rating": 5,
+        "comment": "Kind about my stiff hand. We ran about ten minutes over.",
+        "themes": ["Patient with the Bach", "Ran long"]
+      }
+    },
+    {
+      "id": "visit-lena-alex-b",
+      "spId": "sp-lena",
+      "clientId": "client-alex",
+      "dayOffset": -8,
+      "start": "17:15",
+      "end": "18:00",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "amount": 85,
+      "feedback": {
+        "rating": 5,
+        "comment": "The invention finally held together. Patient with the Bach.",
+        "themes": ["Patient with the Bach"]
+      }
+    },
+    {
+      "id": "visit-lena-ruth-next",
+      "spId": "sp-lena",
+      "clientId": "client-ruth",
+      "nthWeekday": 4,
+      "which": 0,
+      "start": "16:00",
+      "end": "16:45",
+      "status": "scheduled",
+      "paymentStatus": "unpaid",
+      "amount": 85
+    },
+    {
+      "id": "visit-lena-alex-next",
+      "spId": "sp-lena",
+      "clientId": "client-alex",
+      "nthWeekday": 4,
+      "which": 0,
+      "start": "17:15",
+      "end": "18:00",
+      "status": "scheduled",
+      "paymentStatus": "unpaid",
+      "amount": 85
+    },
+    {
+      "id": "visit-lena-ruth-2",
+      "spId": "sp-lena",
+      "clientId": "client-ruth",
+      "nthWeekday": 4,
+      "which": 1,
+      "start": "16:00",
+      "end": "16:45",
+      "status": "scheduled",
+      "paymentStatus": "unpaid",
+      "amount": 85
+    },
+    {
+      "id": "visit-lena-ben-2",
+      "spId": "sp-lena",
+      "clientId": "client-ben",
+      "nthWeekday": 4,
+      "which": 1,
+      "start": "17:15",
+      "end": "18:00",
+      "status": "scheduled",
+      "paymentStatus": "unpaid",
+      "amount": 85
+    }
+  ],
+  "notifications": [
+    {
+      "id": "ntf-lena-times",
+      "persona": "customer",
+      "title": "Lena sent other times",
+      "body": "Thursday's lesson could move to 6:30.",
+      "dayOffset": -1,
+      "time": "09:30",
+      "read": false,
+      "href": "/messages/thread-lena"
+    },
+    {
+      "id": "ntf-maria-done",
+      "persona": "customer",
+      "title": "Maria finished the clean",
+      "body": "Yesterday's visit is ready for a rating if you want to add one. You already left one.",
+      "dayOffset": -1,
+      "time": "16:20",
+      "read": true,
+      "href": "/visits/visit-maria-alex-c"
+    },
+    {
+      "id": "ntf-jordan-request",
+      "persona": "provider",
+      "spId": "sp-jordan",
+      "title": "Alex asked for another walk",
+      "body": "A booking request is waiting in the thread. After 5, so the evening pill is covered.",
+      "dayOffset": 0,
+      "time": "07:41",
+      "read": false,
+      "href": "/messages/thread-jordan"
+    },
+    {
+      "id": "ntf-jordan-travel",
+      "persona": "provider",
+      "spId": "sp-jordan",
+      "title": "Travel doesn't fit this morning",
+      "body": "Chelsea to Greenpoint is tighter than the gap between Alex and Priya.",
+      "dayOffset": 0,
+      "time": "07:05",
+      "read": false,
+      "href": "/sp"
+    },
+    {
+      "id": "ntf-maria-feedback",
+      "persona": "provider",
+      "spId": "sp-maria",
+      "title": "Alex left feedback",
+      "body": "5 stars on the last clean. The plants made the note.",
+      "dayOffset": -1,
+      "time": "18:05",
+      "read": false,
+      "href": "/visits/visit-maria-alex-c"
+    }
+  ],
+  "sentPackets": [
+    {
+      "id": "packet-sam",
+      "kind": "dog_walker",
+      "recipientName": "Sam Okonkwo",
+      "note": "First walks with Miso. She pulls toward the river.",
+      "itemIds": ["kb-door", "kb-lockbox", "kb-doorman", "kb-wifi", "kb-emergency", "kb-dont", "kb-quiet", "kb-shoes", "kb-miso"],
+      "dayOffset": -50,
+      "time": "09:00"
+    }
+  ]
+}

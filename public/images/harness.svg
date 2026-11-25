@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Blue harness hanging on a hook">
+  <rect width="800" height="600" fill="#e7dcc8"/>
+  <rect x="90" y="48" width="620" height="500" rx="18" fill="#f4efe4"/>
+  <rect x="150" y="70" width="500" height="430" fill="#ece2d2"/>
+  <rect x="360" y="110" width="18" height="70" rx="4" fill="#8a6a45"/>
+  <path d="M330 180c40 10 90 10 140 0l-10 36c-36 14-84 14-120 0z" fill="#c9a27a"/>
+  <path d="M300 230c60-30 150-30 210 10" fill="none" stroke="#2f6f9f" stroke-width="28" stroke-linecap="round"/>
+  <path d="M320 300c40 70 130 70 170-10" fill="none" stroke="#2f6f9f" stroke-width="22" stroke-linecap="round"/>
+  <circle cx="300" cy="250" r="16" fill="#16324a"/>
+  <circle cx="500" cy="255" r="16" fill="#16324a"/>
+  <rect x="250" y="400" width="300" height="16" rx="8" fill="#d5c7b2"/>
+</svg>
