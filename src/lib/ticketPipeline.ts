@@ -1,4 +1,4 @@
-export const SITE_ORIGIN = 'https://413x45h4w.github.io/homebook-prototype';
+export const SITE_ORIGIN = 'https://alexforshaw.github.io/homebook-prototype';
 
 export const TICKET_DECISIONS = [
   'approved',

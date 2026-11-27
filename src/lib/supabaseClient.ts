@@ -4,7 +4,7 @@ const url = import.meta.env.VITE_SUPABASE_URL || 'https://ffhmsxgqzmljpyyidfrz.s
 const key =
   import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || 'sb_publishable_VDV1Z0dzp61OWG22ZtZNeg_xhTWHFbx';
 
-export const AUTH_REDIRECT = 'https://413x45h4w.github.io/homebook-prototype/';
+export const AUTH_REDIRECT = 'https://alexforshaw.github.io/homebook-prototype/';
 
 export const supabase = createClient(url, key, {
   auth: {

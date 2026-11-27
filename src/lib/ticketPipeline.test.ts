@@ -6,9 +6,9 @@ describe('ticket pipeline', () => {
   it('names the branch and preview from the first 8 characters', () => {
     expect(ticketShortId('ccf16b62-1111-2222-3333-444444444444')).toBe('ccf16b62');
     expect(ticketBranch('ccf16b62-1111-2222-3333-444444444444')).toBe('ticket/ccf16b62');
-    expect(productionScreen('/knowledge/kb-door')).toBe('https://413x45h4w.github.io/homebook-prototype/#/knowledge/kb-door');
+    expect(productionScreen('/knowledge/kb-door')).toBe('https://alexforshaw.github.io/homebook-prototype/#/knowledge/kb-door');
     expect(previewScreen('ccf16b62', '/knowledge/kb-door')).toBe(
-      'https://413x45h4w.github.io/homebook-prototype/preview/ccf16b62/#/knowledge/kb-door',
+      'https://alexforshaw.github.io/homebook-prototype/preview/ccf16b62/#/knowledge/kb-door',
     );
   });
 

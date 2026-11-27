@@ -1,6 +1,6 @@
 # Ticket pipeline
 
-Approving a feedback ticket queues it. An automation builds a preview. Alex compares it with production in `/#/review`. Only **Ship to production** merges the work onto `main`, which is the only branch that changes the live site at `https://413x45h4w.github.io/homebook-prototype/`.
+Approving a feedback ticket queues it. An automation builds a preview. Alex compares it with production in `/#/review`. Only **Ship to production** merges the work onto `main`, which is the only branch that changes the live site at `https://alexforshaw.github.io/homebook-prototype/`.
 
 Apply `supabase/migrations/20261127120300_ticket_pipeline.sql` in the Supabase SQL editor before the automation runs. The app does not apply it.
 
@@ -75,8 +75,8 @@ docs/ticket-shots/<short-id>/after.png
 Raw URLs, after the branch is on GitHub:
 
 ```
-https://github.com/413x45h4w/homebook-prototype/raw/ticket/<short-id>/docs/ticket-shots/<short-id>/before.png
-https://github.com/413x45h4w/homebook-prototype/raw/ticket/<short-id>/docs/ticket-shots/<short-id>/after.png
+https://github.com/alexforshaw/homebook-prototype/raw/ticket/<short-id>/docs/ticket-shots/<short-id>/before.png
+https://github.com/alexforshaw/homebook-prototype/raw/ticket/<short-id>/docs/ticket-shots/<short-id>/after.png
 ```
 
 Pushing the branch runs Deploy GitHub Pages. That workflow checks out **main** for the site root and builds every existing `ticket/*` branch into `/homebook-prototype/preview/<short-id>/`. Production files change only when `main` changes.
@@ -84,7 +84,7 @@ Pushing the branch runs Deploy GitHub Pages. That workflow checks out **main** f
 Preview URL:
 
 ```
-https://413x45h4w.github.io/homebook-prototype/preview/<short-id>/
+https://alexforshaw.github.io/homebook-prototype/preview/<short-id>/
 ```
 
 The screen the ticket was filed from is the hash route on `ticket_status.route`, for example `#/knowledge/kb-door`.
@@ -99,10 +99,10 @@ POST /rest/v1/ticket_builds
 {
   "ticket_id": "<uuid>",
   "branch": "ticket/<short-id>",
-  "pr_url": "https://github.com/413x45h4w/homebook-prototype/pull/<n>",
-  "preview_url": "https://413x45h4w.github.io/homebook-prototype/preview/<short-id>/#<route>",
-  "before_screenshot_url": "https://github.com/413x45h4w/homebook-prototype/raw/ticket/<short-id>/docs/ticket-shots/<short-id>/before.png",
-  "after_screenshot_url": "https://github.com/413x45h4w/homebook-prototype/raw/ticket/<short-id>/docs/ticket-shots/<short-id>/after.png",
+  "pr_url": "https://github.com/alexforshaw/homebook-prototype/pull/<n>",
+  "preview_url": "https://alexforshaw.github.io/homebook-prototype/preview/<short-id>/#<route>",
+  "before_screenshot_url": "https://github.com/alexforshaw/homebook-prototype/raw/ticket/<short-id>/docs/ticket-shots/<short-id>/before.png",
+  "after_screenshot_url": "https://github.com/alexforshaw/homebook-prototype/raw/ticket/<short-id>/docs/ticket-shots/<short-id>/after.png",
   "summary": "One short paragraph about what changed."
 }
 ```
@@ -130,7 +130,7 @@ Poll for `ship_requested`:
 GET /rest/v1/ticket_status?status=eq.ship_requested&select=*
 ```
 
-Merge the pull request into `main`. Wait until the Deploy GitHub Pages run for that main commit succeeds and `https://413x45h4w.github.io/homebook-prototype/` returns 200. Then:
+Merge the pull request into `main`. Wait until the Deploy GitHub Pages run for that main commit succeeds and `https://alexforshaw.github.io/homebook-prototype/` returns 200. Then:
 
 ```http
 POST /rest/v1/ticket_events

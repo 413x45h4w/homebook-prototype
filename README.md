@@ -6,7 +6,7 @@ Service providers get a day of jobs on a map, travel time between stops, schedul
 
 This repository is a clickable front-end prototype. There is no backend. Mock data lives in [`src/data/seed.json`](src/data/seed.json). Anything you change is stored in `localStorage` in this browser.
 
-The hosted demo is [https://413x45h4w.github.io/homebook-prototype/](https://413x45h4w.github.io/homebook-prototype/). Routing is hash-based (`/#/knowledge`, `/#/packet/dog_walker`) so deep links work on GitHub Pages.
+The hosted demo is [https://alexforshaw.github.io/homebook-prototype/](https://alexforshaw.github.io/homebook-prototype/). Routing is hash-based (`/#/knowledge`, `/#/packet/dog_walker`) so deep links work on GitHub Pages.
 
 ## Run it
 

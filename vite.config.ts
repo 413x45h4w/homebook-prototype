@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react';
 const previewId = process.env.VITE_PREVIEW_ID || '';
 const base = process.env.VITE_BASE || (previewId ? `/homebook-prototype/preview/${previewId}/` : '/homebook-prototype/');
 
-// GitHub Pages project site: https://413x45h4w.github.io/homebook-prototype/
+// GitHub Pages project site: https://alexforshaw.github.io/homebook-prototype/
 export default defineConfig({
   base,
   plugins: [react()],
