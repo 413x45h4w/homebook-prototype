@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { AudienceTags, KbCard, PhotoEditor, RelevanceEditor, itemBody } from '../components/blocks';
+import { ProposalCard, contributedByLine } from '../components/KbSuggestions';
 import { VoiceFeedbackForm } from '../components/VoiceFeedbackForm';
 import { useOverlayStep } from '../lib/useFlowStep';
 import { Field, Modal, PageHeader, useToast } from '../components/ui';
@@ -8,6 +9,7 @@ import { providerById } from '../data/load';
 import { classify } from '../lib/classify';
 import { effective } from '../lib/packet';
 import { useStore } from '../lib/store';
+import { proposalsWaitingOnHomeowner } from '../lib/kbProposals';
 import { formatDayTime, uid } from '../lib/time';
 import { CATEGORIES, SP_KINDS, categoryMeta, type Audience, type CategoryId, type KbItem } from '../lib/types';
 
@@ -42,6 +44,9 @@ export function KnowledgeList() {
       >
         <Link to="/knowledge/new" className="btn">
           Add a note
+        </Link>
+        <Link to="/knowledge/proposals" className="btn btn-ghost">
+          Pending from providers{proposalsWaitingOnHomeowner(state.kbProposals).length ? ` (${proposalsWaitingOnHomeowner(state.kbProposals).length})` : ''}
         </Link>
       </PageHeader>
       <div className="cluster">
@@ -235,6 +240,7 @@ export function KnowledgeItem() {
       ) : (
         <p className="faint">Added {formatDayTime(draft.createdAt)}</p>
       )}
+      {contributedByLine(draft) ? <p className="muted">{contributedByLine(draft)}</p> : null}
       {confirmDelete ? (
         <Modal title="Delete note" onClose={() => setConfirmDelete(false)}>
           <h2>Delete this note?</h2>
@@ -257,6 +263,34 @@ export function KnowledgeItem() {
           </div>
         </Modal>
       ) : null}
+    </div>
+  );
+}
+
+export function KnowledgeProposals() {
+  const { state } = useStore();
+  const waiting = proposalsWaitingOnHomeowner(state.kbProposals);
+  const earlier = state.kbProposals.filter((proposal) => proposal.status !== 'pending');
+  const homeowner = state.persona === 'customer';
+  return (
+    <div className="stack-lg">
+      <PageHeader
+        kicker="Knowledge base"
+        title="Pending from providers"
+        lede="A provider’s note stays here until you approve it. Approving publishes it, with their name on the note. Request changes sends it back. Decline keeps it out of the file."
+        back={{ to: '/knowledge', label: 'Knowledge base' }}
+      >
+        <span className="chip">{waiting.length} pending</span>
+      </PageHeader>
+      {!homeowner ? <div className="notice">Switch to Alex to approve, request changes, or decline. Nothing is published from this side.</div> : null}
+      {waiting.length === 0 ? <p className="empty">Nothing is waiting on you.</p> : null}
+      {waiting.map((proposal) => (
+        <ProposalCard key={`${proposal.id}-${proposal.history.length}`} proposal={proposal} mode={homeowner ? 'homeowner' : 'provider'} />
+      ))}
+      {earlier.length ? <h2 style={{ margin: 0 }}>Earlier decisions</h2> : null}
+      {earlier.map((proposal) => (
+        <ProposalCard key={`${proposal.id}-${proposal.history.length}`} proposal={proposal} mode={homeowner ? 'homeowner' : 'provider'} />
+      ))}
     </div>
   );
 }

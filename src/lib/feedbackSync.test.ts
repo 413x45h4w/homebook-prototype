@@ -3,6 +3,7 @@ import {
   appendDecision,
   buildTicketInsert,
   decisionRow,
+  formatPostgrestError,
   flushOutbox,
   queueLegacyTickets,
   sendTicket,
@@ -125,11 +126,21 @@ describe('central feedback', () => {
     expect(statusFromDecisions(approved)).toBe('approved');
     expect(statusFromDecisions(both)).toBe('disapproved');
     expect(both.map((event) => event.decision)).toEqual(['approved', 'disapproved']);
-    expect(decisionRow('ticket-1', 'approved', '  Ship it  ', 'evt-1')).toEqual({
-      id: 'evt-1',
+    const approvedRow = decisionRow('ticket-1', 'approved', '  Ship it  ');
+    expect(approvedRow).toEqual({
       ticket_id: 'ticket-1',
       decision: 'approved',
       note: 'Ship it',
     });
+    expect(approvedRow).not.toHaveProperty('id');
+    expect(approvedRow).not.toHaveProperty('created_at');
+    expect(approvedRow).not.toHaveProperty('reviewer_email');
+    expect(decisionRow('ticket-1', 'disapproved', '   ')).toEqual({
+      ticket_id: 'ticket-1',
+      decision: 'disapproved',
+    });
+    expect(formatPostgrestError({ message: 'invalid input syntax for type bigint', details: 'Failing row contains (id) = (uuid).', hint: null, code: '22P02' })).toBe(
+      'invalid input syntax for type bigint [22P02] — Failing row contains (id) = (uuid).',
+    );
   });
 });

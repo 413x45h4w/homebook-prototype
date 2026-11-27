@@ -1,6 +1,7 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { KbCard, PaymentBox, VisitSummary } from '../components/blocks';
+import { SuggestKbNote } from '../components/KbSuggestions';
 import { VoiceNoteList } from '../components/VoiceNotes';
 import { DayMap } from '../components/MapView';
 import { PageHeader } from '../components/ui';
@@ -203,6 +204,7 @@ export function SpClient() {
           {[...packet.specific, ...packet.universal].map((item) => (
             <KbCard key={item.id} item={item} />
           ))}
+          <SuggestKbNote clientId={client.id} />
         </section>
       ) : (
         <div className="card">

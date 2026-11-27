@@ -236,6 +236,7 @@ export function freshState(): State {
     sentPackets: buildPackets(),
     dismissedOffers: [],
     voiceNotes: [],
+    kbProposals: [],
   };
 }
 
@@ -246,6 +247,7 @@ export function loadState(): State {
     const parsed = JSON.parse(raw) as State;
     if (!parsed || parsed.version !== STATE_VERSION || !Array.isArray(parsed.items)) return freshState();
     if (!Array.isArray(parsed.voiceNotes)) parsed.voiceNotes = [];
+    if (!Array.isArray(parsed.kbProposals)) parsed.kbProposals = [];
     return parsed;
   } catch {
     return freshState();

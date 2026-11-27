@@ -35,11 +35,11 @@ export interface LegacyTicket {
   context?: Record<string, unknown>;
 }
 
+/** Columns a reviewer may send. id is a generated bigint, and created_at / reviewer_email have database defaults. */
 export interface DecisionInsert {
-  id: string;
   ticket_id: string;
   decision: 'approved' | 'disapproved';
-  note: string | null;
+  note?: string;
 }
 
 export interface InsertResult {
@@ -144,9 +144,18 @@ export async function flushOutbox(
   return { outbox: remaining, sent };
 }
 
-export function decisionRow(ticketId: string, decision: 'approved' | 'disapproved', note: string, id?: string): DecisionInsert {
-  const trimmed = note.trim();
-  return { id: id ?? crypto.randomUUID(), ticket_id: ticketId, decision, note: trimmed ? trimmed.slice(0, 2000) : null };
+export function formatPostgrestError(error: { message?: string; details?: string | null; hint?: string | null; code?: string | null }): string {
+  const message = error.message?.trim() || 'The request was rejected.';
+  const extra = [error.details, error.hint].map((part) => part?.trim()).filter((part): part is string => Boolean(part));
+  const code = error.code ? ` [${error.code}]` : '';
+  return extra.length ? `${message}${code} — ${extra.join(' — ')}` : `${message}${code}`;
+}
+
+export function decisionRow(ticketId: string, decision: 'approved' | 'disapproved', note: string): DecisionInsert {
+  const trimmed = note.trim().slice(0, 2000);
+  const row: DecisionInsert = { ticket_id: ticketId, decision };
+  if (trimmed) row.note = trimmed;
+  return row;
 }
 
 export function appendDecision(events: DecisionEvent[], event: DecisionEvent): DecisionEvent[] {

@@ -5,7 +5,7 @@ import { StoreProvider } from './lib/store';
 import { SearchPage, NotificationsPage } from './pages/find';
 import { HomeSwitch } from './pages/home';
 import { ExportPage, PacketPage, SharePage } from './pages/house';
-import { KnowledgeItem, KnowledgeList } from './pages/knowledge';
+import { KnowledgeItem, KnowledgeList, KnowledgeProposals } from './pages/knowledge';
 import { MessagesPage, ThreadPage } from './pages/messages';
 import { BookPage, ProviderPage, ProvidersPage } from './pages/people';
 import { VisitPage, VisitsPage } from './pages/visits';
@@ -23,6 +23,7 @@ export default function App() {
               <Route path="/" element={<HomeSwitch />} />
               <Route path="/knowledge" element={<KnowledgeList />} />
               <Route path="/knowledge/new" element={<KnowledgeItem />} />
+              <Route path="/knowledge/proposals" element={<KnowledgeProposals />} />
               <Route path="/voice" element={<VoicePage />} />
               <Route path="/voice/:spId" element={<VoicePage />} />
               <Route path="/knowledge/:id" element={<KnowledgeItem />} />

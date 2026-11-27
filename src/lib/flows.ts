@@ -30,6 +30,7 @@ export const FLOW_ROUTES: FlowRoute[] = [
   { path: '/', flow: 'home', step: 'dashboard', screen: 'CustomerHome' },
   { path: '/knowledge', flow: 'knowledge', step: 'list', screen: 'KnowledgeList' },
   { path: '/knowledge/new', flow: 'knowledge', step: 'new-note', screen: 'KnowledgeItem' },
+  { path: '/knowledge/proposals', flow: 'knowledge', step: 'provider-proposals', screen: 'KnowledgeProposals' },
   { path: '/knowledge/:id', flow: 'knowledge', step: 'note-detail', screen: 'KnowledgeItem' },
   { path: '/voice', flow: 'voice-feedback', step: 'compose', screen: 'VoicePage' },
   { path: '/voice/:spId', flow: 'voice-feedback', step: 'compose-for-provider', screen: 'VoicePage' },

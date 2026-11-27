@@ -87,6 +87,11 @@ export interface KbSource {
   spId: string;
 }
 
+export interface KbContribution {
+  spId: string;
+  proposalId: string;
+}
+
 export interface KbItem {
   id: string;
   title: string;
@@ -97,6 +102,35 @@ export interface KbItem {
   images: KbImage[];
   createdAt: string;
   source?: KbSource;
+  contributedBy?: KbContribution;
+}
+
+export type KbProposalStatus = 'pending' | 'changes_requested' | 'declined' | 'approved';
+
+export interface KbProposalEvent {
+  id: string;
+  at: string;
+  action: 'submitted' | 'revised' | 'approved' | 'changes_requested' | 'declined';
+  actor: 'provider' | 'homeowner';
+  note: string;
+  title: string;
+  body: string;
+  category: CategoryId;
+  topic: string;
+}
+
+export interface KbProposal {
+  id: string;
+  spId: string;
+  clientId: string;
+  status: KbProposalStatus;
+  title: string;
+  body: string;
+  category: CategoryId;
+  topic: string;
+  createdAt: string;
+  history: KbProposalEvent[];
+  publishedItemId?: string;
 }
 
 export interface TimeSlot {
@@ -179,6 +213,7 @@ export interface State {
   sentPackets: SentPacket[];
   dismissedOffers: string[];
   voiceNotes: VoiceFeedback[];
+  kbProposals: KbProposal[];
 }
 
 export interface VoiceFeedback {

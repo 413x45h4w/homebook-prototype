@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { alex, providerById, providers } from '../data/load';
 import { notificationsFor, useStore } from '../lib/store';
+import { proposalsWaitingOnHomeowner } from '../lib/kbProposals';
 import type { Persona } from '../lib/types';
 import { kindLabel } from '../lib/types';
 import { AppFeedback } from './AppFeedback';
@@ -43,6 +44,7 @@ function ShellFrame() {
   const [resetOpen, setResetOpen] = useState(false);
   useOverlayStep(personaOpen ? 'switch-persona' : resetOpen ? 'reset-demo' : null);
   const unread = notificationsFor(state).filter((note) => !note.read).length;
+  const pendingKb = state.persona === 'customer' ? proposalsWaitingOnHomeowner(state.kbProposals).length : 0;
   const provider = providerById(state.activeSpId);
   const nav = state.persona === 'provider' ? PROVIDER_NAV : CUSTOMER_NAV;
   const home = state.persona === 'provider' ? '/sp' : '/';
@@ -69,6 +71,7 @@ function ShellFrame() {
           {nav.map((item) => (
             <NavLink key={item.to} to={item.to} end={item.end} className={({ isActive }) => sideClass(isActive, item.to, location.pathname, state.persona)}>
               {item.label}
+              {item.to === '/knowledge' && pendingKb > 0 ? <span className="app-feedback-count">{pendingKb}</span> : null}
             </NavLink>
           ))}
           {state.persona === 'customer' ? (
@@ -151,6 +154,7 @@ function ShellFrame() {
               {item.glyph}
             </span>
             {item.label}
+            {item.to === '/knowledge' && pendingKb > 0 ? <span className="app-feedback-count">{pendingKb}</span> : null}
           </NavLink>
         ))}
       </nav>

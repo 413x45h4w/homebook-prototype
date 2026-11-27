@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useStore } from '../lib/store';
 import { liveCaptionsAvailable, speechRecognitionCtor } from '../lib/speech';
+import { feedbackSheetFrame } from '../lib/feedbackSheet';
 import { buildTicketInsert } from '../lib/feedbackSync';
 import { loadReviewQueue, migrateLocalTickets, readOutbox, readTesterName, retryOutbox, reviewerStatus, submitToSupabase, writeTesterName } from '../lib/feedbackRemote';
 import type { FeedbackSeverity, FeedbackType } from '../lib/tickets';
@@ -29,6 +30,7 @@ export function AppFeedback() {
   const [type, setType] = useState<FeedbackType>('bug');
   const [severity, setSeverity] = useState<FeedbackSeverity | ''>('');
   const [dictating, setDictating] = useState(false);
+  const [sheet, setSheet] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<{ stop: () => void } | null>(null);
   const textId = useId();
@@ -85,6 +87,39 @@ export function AppFeedback() {
       window.clearInterval(timer);
     };
   }, []);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const apply = () => {
+      const vv = window.visualViewport;
+      const frame = feedbackSheetFrame({
+        width: window.innerWidth,
+        visualHeight: vv?.height ?? window.innerHeight,
+        visualOffsetTop: vv?.offsetTop ?? 0,
+      });
+      const useSheet = open && frame.mode === 'sheet';
+      setSheet(useSheet);
+      if (!useSheet) {
+        root.style.removeProperty('--vv-top');
+        root.style.removeProperty('--vv-height');
+        return;
+      }
+      root.style.setProperty('--vv-top', `${frame.top}px`);
+      root.style.setProperty('--vv-height', `${frame.height}px`);
+    };
+    apply();
+    const vv = window.visualViewport;
+    vv?.addEventListener('resize', apply);
+    vv?.addEventListener('scroll', apply);
+    window.addEventListener('resize', apply);
+    return () => {
+      vv?.removeEventListener('resize', apply);
+      vv?.removeEventListener('scroll', apply);
+      window.removeEventListener('resize', apply);
+      root.style.removeProperty('--vv-top');
+      root.style.removeProperty('--vv-height');
+    };
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -173,7 +208,7 @@ export function AppFeedback() {
   };
 
   return (
-    <div className="app-feedback">
+    <div className={`app-feedback${open ? ' is-open' : ''}${sheet ? ' is-sheet' : ''}`}>
       <button
         type="button"
         className="app-feedback-tab"
@@ -194,21 +229,46 @@ export function AppFeedback() {
               Close
             </button>
           </div>
-          <p className="faint" style={{ margin: 0 }}>
-            About {flow.flow} · {flow.step}
-            {flow.screen ? ` · ${flow.screen}` : ''}. This is about Homebook itself, not a cleaner or walker. No account needed.
-          </p>
-          {notice ? (
-            <p className={notice.startsWith('Queued') ? 'notice notice-warn' : 'notice'} role="status">
-              {notice.startsWith('Queued') ? notice : notice === 'Sent' ? 'Sent' : notice}
+          <div className="app-feedback-scroll">
+            <p className="faint" style={{ margin: 0 }}>
+              About {flow.flow} · {flow.step}
+              {flow.screen ? ` · ${flow.screen}` : ''}. This is about Homebook itself, not a cleaner or walker. No account needed.
             </p>
-          ) : null}
-          {queued > 0 ? <p className="faint">Queued, will send · {queued}</p> : null}
-          <label className="field">
-            <span className="field-label">Your name, if you want</span>
-            <input value={testerName} maxLength={100} onChange={(event) => setTesterName(event.target.value)} placeholder="Remembered on this device" />
-          </label>
-          <label className="field" htmlFor={textId}>
+            {notice ? (
+              <p className={notice.startsWith('Queued') ? 'notice notice-warn' : 'notice'} role="status">
+                {notice.startsWith('Queued') ? notice : notice === 'Sent' ? 'Sent' : notice}
+              </p>
+            ) : null}
+            {queued > 0 ? <p className="faint">Queued, will send · {queued}</p> : null}
+            <label className="field">
+              <span className="field-label">Your name, if you want</span>
+              <input value={testerName} maxLength={100} onChange={(event) => setTesterName(event.target.value)} placeholder="Remembered on this device" />
+            </label>
+            <fieldset className="type-set">
+              <legend className="field-label">Type</legend>
+              <div className="cluster">
+                {TYPES.map((item) => (
+                  <label key={item.id} className={`chip-button${type === item.id ? ' chip-on' : ''}`}>
+                    <input type="radio" name="app-feedback-type" value={item.id} checked={type === item.id} onChange={() => setType(item.id)} />
+                    {item.label}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+            <label className="field">
+              <span className="field-label">Severity, if you want</span>
+              <select value={severity} onChange={(event) => setSeverity(event.target.value as FeedbackSeverity | '')}>
+                <option value="">No severity</option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
+            </label>
+            <Link to="/review" className="btn btn-ghost" onClick={() => setOpen(false)}>
+              Review tickets{pending ? ` (${pending})` : ''}
+            </Link>
+          </div>
+          <label className="field app-feedback-note" htmlFor={textId}>
             <span className="field-label">What should change?</span>
             <textarea id={textId} value={text} onChange={(event) => setText(event.target.value)} placeholder="A bug, a rough step, an idea…" />
           </label>
@@ -217,32 +277,9 @@ export function AppFeedback() {
               {dictating ? 'Listening…' : 'Dictate'}
             </button>
           ) : null}
-          <fieldset className="type-set">
-            <legend className="field-label">Type</legend>
-            <div className="cluster">
-              {TYPES.map((item) => (
-                <label key={item.id} className={`chip-button${type === item.id ? ' chip-on' : ''}`}>
-                  <input type="radio" name="app-feedback-type" value={item.id} checked={type === item.id} onChange={() => setType(item.id)} />
-                  {item.label}
-                </label>
-              ))}
-            </div>
-          </fieldset>
-          <label className="field">
-            <span className="field-label">Severity, if you want</span>
-            <select value={severity} onChange={(event) => setSeverity(event.target.value as FeedbackSeverity | '')}>
-              <option value="">No severity</option>
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </select>
-          </label>
-          <button type="button" className="btn" onClick={submit}>
+          <button type="button" className="btn app-feedback-send" onClick={submit}>
             Send feedback
           </button>
-          <Link to="/review" className="btn btn-ghost" onClick={() => setOpen(false)}>
-            Review tickets{pending ? ` (${pending})` : ''}
-          </Link>
         </div>
       ) : null}
     </div>

@@ -3,6 +3,7 @@ import { clearClips } from './audioStore';
 import { classify } from './classify';
 import { itemText } from './packet';
 import { appendVoiceFeedback, type VoiceFeedback } from './voiceFeedback';
+import { approveKbProposal, declineKbProposal, requestKbChanges, reviseKbProposal, submitKbProposal } from './kbProposals';
 import { travelProblem } from './schedule';
 import { formatRange, uid } from './time';
 import type {
@@ -53,6 +54,13 @@ export interface StoreApi {
   markNotificationRead: (id: string) => void;
   markAllNotificationsRead: () => void;
   addVoiceFeedback: (note: VoiceFeedback) => void;
+  suggestKbNote: (input: { title: string; body: string; category: CategoryId; topic: string }) => { ok: true; id: string } | { ok: false; reason: string };
+  reviseKbNote: (id: string, input: { title: string; body: string; category: CategoryId; topic: string }) => { ok: true } | { ok: false; reason: string };
+  decideKbNote: (
+    id: string,
+    action: 'approved' | 'changes_requested' | 'declined',
+    edit: { title: string; body: string; category: CategoryId; topic: string; note: string },
+  ) => { ok: true; itemId?: string } | { ok: false; reason: string };
 }
 
 const StoreContext = createContext<StoreApi | null>(null);
@@ -613,6 +621,86 @@ export function StoreProvider({ children }: { children: ReactNode }) {
             }),
           };
         });
+      },
+      suggestKbNote: (input) => {
+        const id = uid('kbp');
+        const built = submitKbProposal({
+          ...input,
+          id,
+          eventId: uid('kbe'),
+          spId: ref.current.activeSpId,
+          clientId: ALEX_ID,
+          now: new Date(),
+        });
+        if (!built.ok) return built;
+        update((current) => {
+          const provider = providerById(current.activeSpId);
+          return {
+            ...current,
+            kbProposals: [built.proposal, ...current.kbProposals],
+            notifications: pushNote(current, {
+              persona: 'customer',
+              title: 'Pending from providers',
+              body: `${provider?.name ?? 'A provider'} suggested “${built.proposal.title}”`,
+              href: '/knowledge/proposals',
+            }),
+          };
+        });
+        return { ok: true, id };
+      },
+      reviseKbNote: (id, input) => {
+        const current = ref.current.kbProposals.find((proposal) => proposal.id === id);
+        if (!current) return { ok: false, reason: 'That suggestion is gone.' };
+        const built = reviseKbProposal(current, { ...input, eventId: uid('kbe'), now: new Date() });
+        if (!built.ok) return built;
+        update((state) => ({
+          ...state,
+          kbProposals: state.kbProposals.map((proposal) => (proposal.id === id ? built.proposal : proposal)),
+          notifications: pushNote(state, {
+            persona: 'customer',
+            title: 'Pending from providers',
+            body: `${providerById(built.proposal.spId)?.name ?? 'A provider'} updated “${built.proposal.title}”`,
+            href: '/knowledge/proposals',
+          }),
+        }));
+        return { ok: true };
+      },
+      decideKbNote: (id, action, edit) => {
+        const current = ref.current.kbProposals.find((proposal) => proposal.id === id);
+        if (!current) return { ok: false, reason: 'That suggestion is gone.' };
+        const now = new Date();
+        const eventId = uid('kbe');
+        if (action === 'approved') {
+          const built = approveKbProposal(current, edit, now, { eventId, itemId: uid('kb') });
+          if (!built.ok) return built;
+          update((state) => ({
+            ...state,
+            items: [built.item, ...state.items],
+            kbProposals: state.kbProposals.map((proposal) => (proposal.id === id ? built.proposal : proposal)),
+            notifications: pushNote(state, {
+              persona: 'provider',
+              spId: current.spId,
+              title: 'Alex published your note',
+              body: built.item.title,
+              href: `/knowledge/${built.item.id}`,
+            }),
+          }));
+          return { ok: true, itemId: built.item.id };
+        }
+        const built = action === 'declined' ? declineKbProposal(current, edit.note, now, eventId) : requestKbChanges(current, edit.note, now, eventId);
+        if (!built.ok) return built;
+        update((state) => ({
+          ...state,
+          kbProposals: state.kbProposals.map((proposal) => (proposal.id === id ? built.proposal : proposal)),
+          notifications: pushNote(state, {
+            persona: 'provider',
+            spId: current.spId,
+            title: action === 'declined' ? 'Alex declined a note' : 'Alex asked for a change',
+            body: edit.note.trim() || built.proposal.title,
+            href: `/sp/clients/${current.clientId}`,
+          }),
+        }));
+        return { ok: true };
       },
     };
   }, []);

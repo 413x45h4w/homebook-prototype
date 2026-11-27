@@ -59,9 +59,11 @@ Switch persona to **Jordan Hale**.
 1. **Today** (`/#/sp`). Numbered stops on a Leaflet map with OpenStreetMap tiles. Between Alex in Chelsea and Priya in Greenpoint the gap is shorter than the estimate, so the leg is flagged. Legs that fit say so. **Open route in Google Maps** builds a `google.com/maps/dir` link for the day’s stops.
 2. Travel time is haversine distance × 15 km/h, plus 5 minutes to get in the building. It is not live traffic. The place to swap in the Google Maps Distance Matrix API is marked in [`src/lib/travel.ts`](src/lib/travel.ts) (`GOOGLE_DISTANCE_MATRIX`). The prototype never calls Google.
 3. **Week** shows the same conflicts across seven days.
-4. **A job** (`/#/visits/...`) opens the client’s packet before the work: dog notes plus universal notes for Alex, or a one-line access note for anyone else. **Request payment** reveals a Venmo link (`venmo.com/<handle>?txn=pay&amount=…&note=…`) and the Zelle email or phone with copy. **Mark paid** / **Mark unpaid** is local mock state.
+4. **A job** (`/#/visits/...`) opens the client’s packet before the work: dog notes plus universal notes for Alex, or a one-line access note for anyone else. **Request payment** reveals a Venmo link (`venmo.com/<handle>?txn=pay&amount=…&note=…`) and the Zelle email or phone with copy. **Mark paid** / **Mark unpaid** is local mock state. On Alex’s packet, **Suggest a knowledge-base note** sends a title, a topic, and the note (or a dictation) to Alex. It stays pending until Alex approves it.
 5. **Inbox.** Jordan has a pending request for an extra evening walk (so the pill happens). Accept it, or send other open times. Alex can accept those from the customer side.
 6. Switch to **Maria** to see her own conflict (Brooklyn Heights → Upper West Side) and her unpaid visits. Switch to **Sam** to see a past provider with history and no booking calendar. Switch to **Lena** for Thursday lessons.
+
+Alex reviews suggestions at **Pending from providers** (`/#/knowledge/proposals`), also linked from the knowledge base and badged on File. Approve publishes the note with “Contributed by” the provider. You can edit the wording first. Request changes sends it back. Decline leaves the file untouched. Every step stays in the suggestion’s history.
 
 ## Voice notes
 
@@ -71,7 +73,7 @@ Memos longer than about 10 minutes are transcribed only through the first 10. Th
 
 ## App feedback
 
-A **Feedback** tab sits on the edge of every screen, including dialogs. Testers do not sign in. A note is stored in Supabase with the flow and step. If the network fails, it stays in an outbox on this device and is sent later. Reviewers open **App feedback** in the sidebar, or `/#/review`, sign in, and approve or disapprove. Decisions are new rows, not edits. Notes saved in the browser before this change are sent automatically on the next visit, with no sign-in. The review screen still has Upload my local tickets for a reviewer.
+A **Feedback** tab sits on the edge of every screen, including dialogs. On a phone in portrait it opens as a full-width sheet, and the note and Send stay in view when the keyboard is up. Testers do not sign in. A note is stored in Supabase with the flow and step. If the network fails, it stays in an outbox on this device and is sent later. Reviewers open **App feedback** in the sidebar, or `/#/review`, sign in, and approve or disapprove. Decisions are new rows, not edits. Notes saved in the browser before this change are sent automatically on the next visit, with no sign-in. The review screen still has Upload my local tickets for a reviewer.
 
 ## How relevance is guessed
 

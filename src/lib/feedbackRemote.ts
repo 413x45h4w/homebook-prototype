@@ -1,6 +1,7 @@
 import {
   decisionRow,
   flushOutbox,
+  formatPostgrestError,
   queueLegacyTickets,
   sendTicket,
   type LegacyTicket,
@@ -44,7 +45,7 @@ export interface RemoteEvent {
 const client: InsertClient = {
   async insert(table, row) {
     const { error } = await supabase.from(table).insert(row);
-    return { error: error ? { message: error.message } : null };
+    return { error: error ? { message: formatPostgrestError(error) } : null };
   },
 };
 

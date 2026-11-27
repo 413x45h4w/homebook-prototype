@@ -8,6 +8,7 @@ import { googleCalendarUrl, venmoUrl } from '../lib/links';
 import { effective, extractThemes } from '../lib/packet';
 import { describeSlot, slotsOnDay } from '../lib/schedule';
 import { useStore } from '../lib/store';
+import { contributedByLine } from './KbSuggestions';
 import { formatRange, money, uid, upcomingDays } from '../lib/time';
 import {
   CATEGORIES,
@@ -136,6 +137,7 @@ export function KbCard({ item }: { item: KbItem }) {
           ) : null}
         </div>
         <h2 style={{ fontSize: 22, margin: '6px 0' }}>{item.title}</h2>
+        {contributedByLine(item) ? <p className="muted" style={{ margin: '0 0 8px' }}>{contributedByLine(item)}</p> : null}
         <p className="muted" style={{ margin: '0 0 10px' }}>
           {item.body.replace(/\s+/g, ' ').slice(0, 140)}
           {item.body.length > 140 ? '…' : ''}
