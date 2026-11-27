@@ -21,6 +21,7 @@ import type {
   VisitStatus,
   PaymentStatus,
 } from '../lib/types';
+import { normalizeProvider } from '../lib/providers';
 
 interface SeedWhen {
   dayOffset?: number;
@@ -98,14 +99,25 @@ export const STATE_VERSION = 1;
 export const ALEX_ID = seed.customerId;
 
 export const clients = seed.clients as Client[];
-export const providers = seed.providers as Provider[];
 
 export function clientById(id: string): Client | undefined {
   return clients.find((client) => client.id === id);
 }
 
+export const providers = (seed.providers as Provider[]).map((provider) => normalizeProvider(provider));
+
+let liveProviders: Provider[] | null = null;
+
+export function setLiveProviders(list: Provider[] | null) {
+  liveProviders = list;
+}
+
+export function providerList(): Provider[] {
+  return liveProviders ?? providers;
+}
+
 export function providerById(id: string): Provider | undefined {
-  return providers.find((provider) => provider.id === id);
+  return providerList().find((provider) => provider.id === id);
 }
 
 export const alex = clientById(ALEX_ID)!;
@@ -237,6 +249,8 @@ export function freshState(): State {
     dismissedOffers: [],
     voiceNotes: [],
     kbProposals: [],
+    providers: providers.map((provider) => ({ ...provider, slotTemplates: provider.slotTemplates.map((slot) => ({ ...slot })) })),
+    appointments: [],
   };
 }
 
@@ -248,6 +262,12 @@ export function loadState(): State {
     if (!parsed || parsed.version !== STATE_VERSION || !Array.isArray(parsed.items)) return freshState();
     if (!Array.isArray(parsed.voiceNotes)) parsed.voiceNotes = [];
     if (!Array.isArray(parsed.kbProposals)) parsed.kbProposals = [];
+    if (!Array.isArray(parsed.providers) || parsed.providers.length === 0) {
+      parsed.providers = providers.map((provider) => ({ ...provider, slotTemplates: provider.slotTemplates.map((slot) => ({ ...slot })) }));
+    } else {
+      parsed.providers = parsed.providers.map((provider) => normalizeProvider(provider));
+    }
+    if (!Array.isArray(parsed.appointments)) parsed.appointments = [];
     return parsed;
   } catch {
     return freshState();

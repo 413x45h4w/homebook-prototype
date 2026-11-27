@@ -8,6 +8,8 @@ import { ExportPage, PacketPage, SharePage } from './pages/house';
 import { KnowledgeItem, KnowledgeList, KnowledgeProposals } from './pages/knowledge';
 import { MessagesPage, ThreadPage } from './pages/messages';
 import { BookPage, ProviderPage, ProvidersPage } from './pages/people';
+import { ProviderFormPage } from './pages/providerForm';
+import { CalendarPage } from './pages/calendar';
 import { VisitPage, VisitsPage } from './pages/visits';
 import { ReviewPage } from './pages/review';
 import { VoicePage } from './pages/voice';
@@ -32,10 +34,13 @@ export default function App() {
               <Route path="/export" element={<ExportPage />} />
               <Route path="/visits" element={<VisitsPage />} />
               <Route path="/visits/:id" element={<VisitPage />} />
+              <Route path="/calendar" element={<CalendarPage />} />
               <Route path="/messages" element={<MessagesPage />} />
               <Route path="/messages/:threadId" element={<ThreadPage />} />
               <Route path="/book/:spId" element={<BookPage />} />
               <Route path="/providers" element={<ProvidersPage />} />
+              <Route path="/providers/new" element={<ProviderFormPage />} />
+              <Route path="/providers/:spId/edit" element={<ProviderFormPage />} />
               <Route path="/providers/:spId" element={<ProviderPage />} />
               <Route path="/search" element={<SearchPage />} />
               <Route path="/notifications" element={<NotificationsPage />} />

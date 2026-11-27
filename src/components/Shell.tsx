@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { alex, providerById, providers } from '../data/load';
+import { alex, providerById } from '../data/load';
 import { notificationsFor, useStore } from '../lib/store';
 import { proposalsWaitingOnHomeowner } from '../lib/kbProposals';
 import type { Persona } from '../lib/types';
@@ -12,8 +12,9 @@ import { FlowProvider, useOverlayStep } from '../lib/useFlowStep';
 const CUSTOMER_NAV = [
   { to: '/', label: 'Home', glyph: '⌂', end: true },
   { to: '/knowledge', label: 'File', glyph: '☰' },
+  { to: '/calendar', label: 'Calendar', glyph: '▦' },
   { to: '/messages', label: 'Inbox', glyph: '✉' },
-  { to: '/visits', label: 'Visits', glyph: '▦' },
+  { to: '/visits', label: 'Visits', glyph: '◷' },
   { to: '/providers', label: 'People', glyph: '☺' },
 ];
 
@@ -57,6 +58,7 @@ function ShellFrame() {
 
   return (
     <div className={state.persona === 'provider' ? 'app app-provider' : 'app app-customer'}>
+      {__PREVIEW_ID__ ? <div className="preview-banner">PREVIEW – ticket {__PREVIEW_ID__}</div> : null}
       <aside className="sidebar">
         <Link to={home} className="brand">
           <Logo />
@@ -173,7 +175,7 @@ function ShellFrame() {
               </span>
               {state.persona === 'customer' ? <span className="chip">Current</span> : null}
             </button>
-            {providers.map((person) => (
+            {state.providers.map((person) => (
               <button type="button" className="card person" key={person.id} onClick={() => choose('provider', person.id)}>
                 <Avatar name={person.name} color={person.color} />
                 <span>
@@ -223,6 +225,7 @@ function sideClass(isActive: boolean, to: string, path: string, persona: Persona
 }
 
 function navOn(isActive: boolean, to: string, path: string, persona: Persona) {
+  if (to === '/calendar') return path.startsWith('/calendar');
   if (to === '/visits' && persona === 'customer') return path.startsWith('/visits');
   if (to === '/sp' && persona === 'provider') return path === '/sp' || path.startsWith('/visits');
   if (to === '/sp/schedule' && persona === 'provider') return path.startsWith('/sp/schedule');

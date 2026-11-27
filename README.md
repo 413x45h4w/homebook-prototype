@@ -73,7 +73,11 @@ Memos longer than about 10 minutes are transcribed only through the first 10. Th
 
 ## App feedback
 
-A **Feedback** tab sits on the edge of every screen, including dialogs. On a phone in portrait it opens as a full-width sheet, and the note and Send stay in view when the keyboard is up. Testers do not sign in. A note is stored in Supabase with the flow and step. If the network fails, it stays in an outbox on this device and is sent later. Reviewers open **App feedback** in the sidebar, or `/#/review`, sign in, and approve or disapprove. Decisions are new rows, not edits. Notes saved in the browser before this change are sent automatically on the next visit, with no sign-in. The review screen still has Upload my local tickets for a reviewer.
+A **Feedback** tab sits on the edge of every screen, including dialogs. On a phone in portrait it opens as a full-width sheet, and the note and Send stay in view when the keyboard is up. Testers do not sign in. A note is stored in Supabase with the flow and step. If the network fails, it stays in an outbox on this device and is sent later. Reviewers open **App feedback** in the sidebar, or `/#/review`, sign in, and approve or disapprove. Approving queues the ticket for a preview. **Ship to production** is the step that merges it. See [docs/TICKET_PIPELINE.md](docs/TICKET_PIPELINE.md). Decisions are new rows, not edits. Notes saved in the browser before this change are sent automatically on the next visit, with no sign-in. The review screen still has Upload my local tickets for a reviewer.
+
+## People and calendar
+
+**Add a provider** on People stores a name, company, trade, phone, email, website, service area, preferred contact, and notes in this browser, with the rest of the household file. Call and email are real links. The **Calendar** (`/#/calendar`) is a month, week, and agenda. Visits already in the demo show up as events. New events can repeat and download as an `.ics` file.
 
 ## How relevance is guessed
 

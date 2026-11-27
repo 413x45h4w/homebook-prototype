@@ -8,6 +8,7 @@ import { travelProblem } from './schedule';
 import { formatRange, uid } from './time';
 import type {
   AppNotification,
+  Appointment,
   Audience,
   CategoryId,
   KbImage,
@@ -20,7 +21,9 @@ import type {
   State,
   Visit,
 } from './types';
-import { ALEX_ID, clients, freshState, loadState, providerById, STORAGE_KEY } from '../data/load';
+import { ALEX_ID, clients, freshState, loadState, providerById, setLiveProviders, STORAGE_KEY } from '../data/load';
+import { validateAppointment } from './calendar';
+import { validateProvider, type ProviderDraft } from './providers';
 
 type Updater = (state: State) => State;
 
@@ -61,6 +64,9 @@ export interface StoreApi {
     action: 'approved' | 'changes_requested' | 'declined',
     edit: { title: string; body: string; category: CategoryId; topic: string; note: string },
   ) => { ok: true; itemId?: string } | { ok: false; reason: string };
+  saveProvider: (draft: ProviderDraft) => { ok: true; id: string } | { ok: false; reason: string };
+  saveAppointment: (input: Omit<Appointment, 'id' | 'createdAt'> & { id?: string }) => { ok: true; id: string } | { ok: false; reason: string };
+  deleteAppointment: (id: string) => void;
 }
 
 const StoreContext = createContext<StoreApi | null>(null);
@@ -702,10 +708,56 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         }));
         return { ok: true };
       },
+      saveProvider: (draft) => {
+        const built = validateProvider(draft);
+        if (!built.ok) return built;
+        const existing = draft.id ? ref.current.providers.find((provider) => provider.id === draft.id) : undefined;
+        const provider = existing
+          ? {
+              ...existing,
+              name: built.provider.name,
+              trade: built.provider.trade,
+              kind: built.provider.kind,
+              phone: built.provider.phone,
+              company: built.provider.company,
+              email: built.provider.email,
+              website: built.provider.website,
+              serviceArea: built.provider.serviceArea,
+              preferredContact: built.provider.preferredContact,
+              notes: built.provider.notes,
+              bio: built.provider.notes || existing.bio,
+            }
+          : built.provider;
+        update((current) => ({
+          ...current,
+          providers: existing
+            ? current.providers.map((row) => (row.id === provider.id ? provider : row))
+            : [provider, ...current.providers],
+        }));
+        return { ok: true, id: provider.id };
+      },
+      saveAppointment: (input) => {
+        const built = validateAppointment(input);
+        if (!built.ok) return built;
+        const id = input.id || uid('apt');
+        update((current) => {
+          const previous = current.appointments.find((row) => row.id === id);
+          const row: Appointment = { ...built.value, id, createdAt: previous?.createdAt ?? new Date().toISOString() };
+          return {
+            ...current,
+            appointments: previous ? current.appointments.map((item) => (item.id === id ? row : item)) : [row, ...current.appointments],
+          };
+        });
+        return { ok: true, id };
+      },
+      deleteAppointment: (id) => {
+        update((current) => ({ ...current, appointments: current.appointments.filter((row) => row.id !== id) }));
+      },
     };
   }, []);
 
   const value = useMemo<StoreApi>(() => ({ state, ...api }), [state, api]);
+  setLiveProviders(state.providers);
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
 }
 

@@ -4,9 +4,24 @@ export const SP_KINDS = [
   { id: 'pet_sitter', label: 'Pet sitter', plural: 'pet sitters' },
   { id: 'piano_teacher', label: 'Piano teacher', plural: 'piano teachers' },
   { id: 'plumber', label: 'Plumber', plural: 'plumbers' },
+  { id: 'electrician', label: 'Electrician', plural: 'electricians' },
+  { id: 'hvac', label: 'HVAC', plural: 'HVAC techs' },
   { id: 'handyman', label: 'Handyman', plural: 'handymen' },
   { id: 'babysitter', label: 'Babysitter', plural: 'babysitters' },
+  { id: 'other', label: 'Other', plural: 'other providers' },
 ] as const;
+
+export const TRADES = [
+  { id: 'plumber', label: 'Plumber' },
+  { id: 'electrician', label: 'Electrician' },
+  { id: 'hvac', label: 'HVAC' },
+  { id: 'cleaner', label: 'Cleaner' },
+  { id: 'handyman', label: 'Handyman' },
+  { id: 'other', label: 'Other' },
+] as const;
+
+export type TradeId = (typeof TRADES)[number]['id'];
+export type PreferredContact = 'phone' | 'email' | 'text';
 
 export type SpKind = (typeof SP_KINDS)[number]['id'];
 export type Audience = SpKind | 'all';
@@ -73,6 +88,28 @@ export interface Provider {
   bookable: boolean;
   color: string;
   slotTemplates: SlotTemplate[];
+  trade?: TradeId;
+  company?: string;
+  email?: string;
+  website?: string;
+  serviceArea?: string;
+  preferredContact?: PreferredContact;
+  notes?: string;
+}
+
+export type AppointmentRecurrence = 'none' | 'weekly' | 'biweekly' | 'monthly';
+
+export interface Appointment {
+  id: string;
+  title: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  providerId: string;
+  location: string;
+  notes: string;
+  recurrence: AppointmentRecurrence;
+  createdAt: string;
 }
 
 export interface KbImage {
@@ -214,6 +251,8 @@ export interface State {
   dismissedOffers: string[];
   voiceNotes: VoiceFeedback[];
   kbProposals: KbProposal[];
+  providers: Provider[];
+  appointments: Appointment[];
 }
 
 export interface VoiceFeedback {

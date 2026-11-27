@@ -35,10 +35,12 @@ export interface LegacyTicket {
   context?: Record<string, unknown>;
 }
 
+import type { ReviewerDecision } from './ticketPipeline';
+
 /** Columns a reviewer may send. id is a generated bigint, and created_at / reviewer_email have database defaults. */
 export interface DecisionInsert {
   ticket_id: string;
-  decision: 'approved' | 'disapproved';
+  decision: ReviewerDecision;
   note?: string;
 }
 
@@ -52,7 +54,7 @@ export interface InsertClient {
 
 export interface DecisionEvent {
   id: string;
-  decision: 'approved' | 'disapproved' | 'reopened';
+  decision: ReviewerDecision | 'in_progress' | 'preview_ready' | 'shipped';
   note: string | null;
   created_at: string;
 }
@@ -151,7 +153,7 @@ export function formatPostgrestError(error: { message?: string; details?: string
   return extra.length ? `${message}${code} — ${extra.join(' — ')}` : `${message}${code}`;
 }
 
-export function decisionRow(ticketId: string, decision: 'approved' | 'disapproved', note: string): DecisionInsert {
+export function decisionRow(ticketId: string, decision: ReviewerDecision, note: string): DecisionInsert {
   const trimmed = note.trim().slice(0, 2000);
   const row: DecisionInsert = { ticket_id: ticketId, decision };
   if (trimmed) row.note = trimmed;
@@ -162,7 +164,7 @@ export function appendDecision(events: DecisionEvent[], event: DecisionEvent): D
   return [...events, event];
 }
 
-export function statusFromDecisions(events: DecisionEvent[]): 'pending' | 'approved' | 'disapproved' | 'reopened' {
+export function statusFromDecisions(events: DecisionEvent[]): DecisionEvent['decision'] | 'pending' {
   const latest = events[events.length - 1];
   return latest ? latest.decision : 'pending';
 }

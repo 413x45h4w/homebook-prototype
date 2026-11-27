@@ -1,16 +1,19 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { PageHeader, copyText, useToast } from '../components/ui';
-import { statusFromDecisions } from '../lib/feedbackSync';
 import {
   eventsFor,
+  latestBuild,
   loadReviewQueue,
+  loadTicketBuilds,
   localTicketsToUpload,
   reviewerStatus,
   submitDecision,
   uploadLocalTickets,
   type RemoteEvent,
   type RemoteTicket,
+  type TicketBuild,
 } from '../lib/feedbackRemote';
+import { COMPARE_WIDTH, QUEUE_SECTIONS, previewScreen, productionScreen, ticketShortId, type ReviewerDecision } from '../lib/ticketPipeline';
 import { AUTH_REDIRECT, supabase } from '../lib/supabaseClient';
 import { formatDayTime } from '../lib/time';
 
@@ -23,12 +26,13 @@ export function ReviewPage() {
   const [authMessage, setAuthMessage] = useState('');
   const [tickets, setTickets] = useState<RemoteTicket[]>([]);
   const [events, setEvents] = useState<RemoteEvent[]>([]);
+  const [builds, setBuilds] = useState<TicketBuild[]>([]);
   const [error, setError] = useState('');
-  const [status, setStatus] = useState<'all' | RemoteTicket['status']>('pending');
   const [flow, setFlow] = useState('all');
   const [type, setType] = useState<'all' | RemoteTicket['type']>('all');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [note, setNote] = useState('');
+  const [frame, setFrame] = useState<'desktop' | 'phone'>('desktop');
   const [localCount, setLocalCount] = useState(() => localTicketsToUpload().length);
 
   const refresh = useCallback(async () => {
@@ -45,6 +49,9 @@ export function ReviewPage() {
     setError('');
     setTickets(queue.tickets);
     setEvents(queue.events);
+    const built = await loadTicketBuilds();
+    if (built.error) setError(`Tickets loaded. Build info is unavailable. ${built.error}`);
+    setBuilds(built.builds);
   }, []);
 
   useEffect(() => {
@@ -59,16 +66,10 @@ export function ReviewPage() {
 
   const flows = useMemo(() => [...new Set(tickets.map((ticket) => ticket.flow))].sort(), [tickets]);
   const filtered = tickets.filter((ticket) => {
-    if (status !== 'all' && ticket.status !== status) return false;
     if (flow !== 'all' && ticket.flow !== flow) return false;
     if (type !== 'all' && ticket.type !== type) return false;
     return true;
   });
-  const groups = new Map<string, RemoteTicket[]>();
-  for (const ticket of filtered) {
-    const key = `${ticket.flow} / ${ticket.step}`;
-    groups.set(key, [...(groups.get(key) ?? []), ticket]);
-  }
   const selected = tickets.find((ticket) => ticket.id === selectedId) ?? null;
   const history = selected ? eventsFor(events, selected.id) : [];
   const pending = tickets.filter((ticket) => ticket.status === 'pending').length;
@@ -95,8 +96,12 @@ export function ReviewPage() {
     }
   };
 
-  const decide = async (decision: 'approved' | 'disapproved') => {
+  const decide = async (decision: ReviewerDecision) => {
     if (!selected) return;
+    if (decision === 'changes_requested' && !note.trim()) {
+      setError('Say what should change.');
+      return;
+    }
     const message = await submitDecision(selected.id, decision, note);
     if (message) {
       setError(message);
@@ -104,7 +109,15 @@ export function ReviewPage() {
       return;
     }
     setNote('');
-    toast(decision === 'approved' ? 'Ticket approved' : 'Ticket disapproved');
+    const labels: Record<ReviewerDecision, string> = {
+      approved: 'Queued for work',
+      disapproved: 'Ticket disapproved',
+      reopened: 'Ticket reopened',
+      ship_requested: 'Ship requested. It goes to production after the preview is merged.',
+      changes_requested: 'Changes requested',
+      discarded: 'Ticket discarded',
+    };
+    toast(labels[decision]);
     await refresh();
   };
 
@@ -113,7 +126,7 @@ export function ReviewPage() {
       <PageHeader
         kicker="Owner"
         title="Feedback tickets"
-        lede="Testers send notes straight here. No export. Approving or disapproving adds a row to the history."
+        lede="Approving queues a ticket for a preview build. Ship is the only step that changes the live site."
       >
         {reviewer ? <span className="chip">{pending} pending</span> : null}
       </PageHeader>
@@ -184,16 +197,6 @@ export function ReviewPage() {
             </button>
           </div>
           <div className="cluster">
-            <label className="field" style={{ minWidth: 140 }}>
-              <span className="field-label">Status</span>
-              <select value={status} onChange={(event) => setStatus(event.target.value as typeof status)}>
-                <option value="pending">Pending review</option>
-                <option value="approved">Approved</option>
-                <option value="disapproved">Disapproved</option>
-                <option value="reopened">Reopened</option>
-                <option value="all">All</option>
-              </select>
-            </label>
             <label className="field" style={{ minWidth: 160 }}>
               <span className="field-label">Flow</span>
               <select value={flow} onChange={(event) => setFlow(event.target.value)}>
@@ -237,30 +240,32 @@ export function ReviewPage() {
               Copy approved as GitHub issues
             </button>
           </div>
-          {groups.size === 0 ? <p className="empty">No tickets in this filter.</p> : null}
-          {[...groups.entries()].map(([group, rows]) => (
-            <section key={group} className="stack">
-              <h2 style={{ margin: 0, fontSize: 22 }}>{group}</h2>
-              {rows.map((ticket) => (
-                <button type="button" key={ticket.id} className="card" onClick={() => setSelectedId(ticket.id)}>
-                  <div className="split">
-                    <strong>{ticket.title}</strong>
-                    <span className="chip">{ticket.status === 'pending' ? 'Pending review' : ticket.status}</span>
-                  </div>
-                  <p className="muted" style={{ margin: '8px 0 0' }}>
-                    {ticket.tester_name ? `${ticket.tester_name} · ` : ''}
-                    {ticket.type}
-                    {ticket.severity ? ` · ${ticket.severity}` : ''} · {formatDayTime(ticket.created_at)}
-                  </p>
-                </button>
-              ))}
-            </section>
-          ))}
+          {QUEUE_SECTIONS.map((section) => {
+            const rows = filtered.filter((ticket) => section.statuses.includes(ticket.status));
+            return (
+              <section key={section.id} className="stack">
+                <h2 style={{ margin: 0, fontSize: 22 }}>{section.title} · {rows.length}</h2>
+                {rows.length === 0 ? <p className="empty">Nothing in this queue.</p> : null}
+                {rows.map((ticket) => (
+                  <button type="button" key={ticket.id} className="card" onClick={() => setSelectedId(ticket.id)}>
+                    <div className="split">
+                      <strong>{ticket.title}</strong>
+                      <span className="chip">{ticket.status === 'pending' ? 'Needs decision' : ticket.status.replaceAll('_', ' ')}</span>
+                    </div>
+                    <p className="muted" style={{ margin: '8px 0 0' }}>
+                      {ticket.tester_name ? `${ticket.tester_name} · ` : ''}
+                      {ticket.flow} / {ticket.step} · {formatDayTime(ticket.created_at)}
+                    </p>
+                  </button>
+                ))}
+              </section>
+            );
+          })}
           {selected ? (
             <article className="card stack">
               <div className="split">
                 <h2 style={{ margin: 0, fontSize: 26 }}>{selected.title}</h2>
-                <span className="chip">{selected.status}</span>
+                <span className="chip">{selected.status.replaceAll('_', ' ')}</span>
                 <button type="button" className="btn btn-small btn-ghost" onClick={() => setSelectedId(null)}>
                   Close
                 </button>
@@ -272,23 +277,36 @@ export function ReviewPage() {
                 <div><dt>Route</dt><dd>{selected.route}</dd></div>
                 <div><dt>Role</dt><dd>{selected.role}</dd></div>
                 <div><dt>From</dt><dd>{selected.tester_name || 'Anonymous'}</dd></div>
-                <div><dt>Context</dt><dd>{JSON.stringify(selected.context)}</dd></div>
               </dl>
+              {selected.status === 'preview_ready' ? (
+                <PreviewCompare ticket={selected} build={latestBuild(builds, selected.id)} frame={frame} onFrame={setFrame} />
+              ) : null}
               <label className="field">
                 <span className="field-label">Reviewer note</span>
-                <textarea value={note} onChange={(event) => setNote(event.target.value)} placeholder="Optional. Saved with the decision." />
+                <textarea value={note} onChange={(event) => setNote(event.target.value)} placeholder={selected.status === 'preview_ready' ? 'Required when you request changes.' : 'Optional. Saved with the decision.'} />
               </label>
               <div className="cluster">
-                <button type="button" className="btn" onClick={() => void decide('approved')}>Approve</button>
-                <button type="button" className="btn btn-danger" onClick={() => void decide('disapproved')}>Disapprove</button>
+                {selected.status === 'pending' || selected.status === 'reopened' ? (
+                  <>
+                    <button type="button" className="btn" onClick={() => void decide('approved')}>Approve and queue</button>
+                    <button type="button" className="btn btn-danger" onClick={() => void decide('disapproved')}>Disapprove</button>
+                  </>
+                ) : null}
+                {selected.status === 'preview_ready' ? (
+                  <>
+                    <button type="button" className="btn" onClick={() => void decide('ship_requested')}>Ship to production</button>
+                    <button type="button" className="btn btn-ghost" onClick={() => void decide('changes_requested')}>Request changes</button>
+                    <button type="button" className="btn btn-danger" onClick={() => void decide('discarded')}>Discard</button>
+                  </>
+                ) : null}
               </div>
               <h3 style={{ marginBottom: 0 }}>Decision history</h3>
-              <p className="faint">Latest decision: {statusFromDecisions(history.map((event) => ({ id: event.id, decision: event.decision, note: event.note, created_at: event.created_at })))}</p>
+              <p className="faint">Latest state: {selected.status.replaceAll('_', ' ')}</p>
               <ol className="stack">
                 <li>created · {formatDayTime(selected.created_at)}</li>
                 {history.map((event) => (
                   <li key={event.id}>
-                    <strong>{event.decision}</strong> · {formatDayTime(event.created_at)}
+                    <strong>{event.decision.replaceAll('_', ' ')}</strong> · {formatDayTime(event.created_at)}
                     {event.reviewer_email ? ` · ${event.reviewer_email}` : ''}
                     {event.note ? ` · ${event.note}` : ''}
                   </li>
@@ -298,6 +316,43 @@ export function ReviewPage() {
           ) : null}
         </>
       ) : null}
+    </div>
+  );
+}
+
+function PreviewCompare({
+  ticket,
+  build,
+  frame,
+  onFrame,
+}: {
+  ticket: RemoteTicket;
+  build: TicketBuild | null;
+  frame: 'desktop' | 'phone';
+  onFrame: (frame: 'desktop' | 'phone') => void;
+}) {
+  const shortId = ticketShortId(ticket.id);
+  const width = COMPARE_WIDTH[frame];
+  return (
+    <div className="stack">
+      <div className="cluster">
+        <button type="button" className={`chip-button${frame === 'desktop' ? ' chip-on' : ''}`} onClick={() => onFrame('desktop')}>Desktop</button>
+        <button type="button" className={`chip-button${frame === 'phone' ? ' chip-on' : ''}`} onClick={() => onFrame('phone')}>iPhone</button>
+        {build?.pr_url ? <a className="btn btn-small btn-ghost" href={build.pr_url}>Pull request</a> : <span className="faint">Branch ticket/{shortId}</span>}
+      </div>
+      {build?.summary ? <p style={{ margin: 0 }}>{build.summary}</p> : <p className="muted">No change summary yet.</p>}
+      <div className="compare-grid" style={{ ['--frame-w' as string]: `${width}px` }}>
+        <div className="stack">
+          <h3 style={{ margin: 0 }}>Production</h3>
+          <div className="compare-frame"><iframe title="Production" src={productionScreen(ticket.route)} /></div>
+          {build?.before_screenshot_url ? <img className="compare-shot" src={build.before_screenshot_url} alt="Before" /> : null}
+        </div>
+        <div className="stack">
+          <h3 style={{ margin: 0 }}>Preview</h3>
+          <div className="compare-frame"><iframe title="Preview" src={build?.preview_url || previewScreen(shortId, ticket.route)} /></div>
+          {build?.after_screenshot_url ? <img className="compare-shot" src={build.after_screenshot_url} alt="After" /> : null}
+        </div>
+      </div>
     </div>
   );
 }

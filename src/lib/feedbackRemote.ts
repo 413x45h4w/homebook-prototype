@@ -9,6 +9,7 @@ import {
   type OutboxItem,
   type TicketInsert,
 } from './feedbackSync';
+import type { ReviewerDecision, TicketStatus } from './ticketPipeline';
 import { supabase } from './supabaseClient';
 
 const OUTBOX_KEY = 'homebook.feedbackOutbox.v1';
@@ -30,16 +31,28 @@ export interface RemoteTicket {
   tester_name: string | null;
   context: Record<string, unknown> | null;
   app_version: string | null;
-  status: 'pending' | 'approved' | 'disapproved' | 'reopened';
+  status: TicketStatus;
 }
 
 export interface RemoteEvent {
   id: string;
   ticket_id: string;
   created_at: string;
-  decision: 'approved' | 'disapproved' | 'reopened';
+  decision: TicketStatus;
   note: string | null;
   reviewer_email: string | null;
+}
+
+export interface TicketBuild {
+  id: number;
+  ticket_id: string;
+  branch: string;
+  pr_url: string | null;
+  preview_url: string | null;
+  before_screenshot_url: string | null;
+  after_screenshot_url: string | null;
+  summary: string | null;
+  created_at: string;
 }
 
 const client: InsertClient = {
@@ -111,10 +124,20 @@ export async function loadReviewQueue(): Promise<{ tickets: RemoteTicket[]; even
   return { tickets: (tickets.data ?? []) as RemoteTicket[], events: (events.data ?? []) as RemoteEvent[] };
 }
 
-export async function submitDecision(ticketId: string, decision: 'approved' | 'disapproved', note: string): Promise<string | null> {
+export async function submitDecision(ticketId: string, decision: ReviewerDecision, note: string): Promise<string | null> {
   const row = decisionRow(ticketId, decision, note);
   const result = await client.insert('ticket_events', row);
   return result.error?.message ?? null;
+}
+
+export async function loadTicketBuilds(): Promise<{ builds: TicketBuild[]; error?: string }> {
+  const builds = await supabase.from('ticket_builds').select('*').order('created_at', { ascending: false });
+  if (builds.error) return { builds: [], error: builds.error.message };
+  return { builds: (builds.data ?? []) as TicketBuild[] };
+}
+
+export function latestBuild(builds: TicketBuild[], ticketId: string): TicketBuild | null {
+  return builds.find((build) => build.ticket_id === ticketId) ?? null;
 }
 
 export function eventsFor(events: RemoteEvent[], ticketId: string): RemoteEvent[] {

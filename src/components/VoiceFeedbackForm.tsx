@@ -7,7 +7,6 @@ import { uid } from '../lib/time';
 import { useStore } from '../lib/store';
 import { CATEGORIES, type CategoryId } from '../lib/types';
 import { createVoiceFeedback, isAudioFile, pickRecorderMime } from '../lib/voiceFeedback';
-import { providers } from '../data/load';
 import { useOverlayStep } from '../lib/useFlowStep';
 import { Field, Stars, useToast } from './ui';
 
@@ -264,7 +263,7 @@ export function VoiceFeedbackForm({
     try {
       await saveClip(built.note.audioId, clip.blob, clip.mimeType);
       addVoiceFeedback(built.note);
-      const name = providers.find((provider) => provider.id === built.note.spId)?.name.split(' ')[0] ?? 'them';
+      const name = state.providers.find((provider) => provider.id === built.note.spId)?.name.split(' ')[0] ?? 'them';
       toast(`Voice note saved for ${name}`);
       navigate(`/providers/${built.note.spId}`);
     } catch {
@@ -349,7 +348,7 @@ export function VoiceFeedbackForm({
         <span className="field-label">Provider</span>
         <select value={spId} onChange={(event) => setSpId(event.target.value)}>
           <option value="">Choose a provider</option>
-          {providers.map((provider) => (
+          {state.providers.map((provider) => (
             <option key={provider.id} value={provider.id}>
               {provider.name} · {provider.service}
             </option>

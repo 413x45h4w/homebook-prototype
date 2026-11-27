@@ -2,7 +2,10 @@ name: Deploy GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - 'ticket/**'
+  delete:
   workflow_dispatch:
 
 permissions:
@@ -16,12 +19,19 @@ concurrency:
 
 jobs:
   build:
+    if: github.event_name != 'delete' || (github.event.ref_type == 'branch' && startsWith(github.event.ref, 'refs/heads/ticket/'))
     runs-on: ubuntu-latest
     env:
       ONNXRUNTIME_NODE_INSTALL_CUDA: skip
     steps:
-      - name: Checkout
+      - name: Checkout main
         uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Fetch ticket branches
+        run: git fetch origin 'refs/heads/ticket/*:refs/remotes/origin/ticket/*' || true
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -32,13 +42,13 @@ jobs:
       - name: Install
         run: npm ci
 
-      - name: Build
-        run: npm run build
+      - name: Build production and previews
+        run: node scripts/build-pages.mjs
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: site
 
   deploy:
     needs: build

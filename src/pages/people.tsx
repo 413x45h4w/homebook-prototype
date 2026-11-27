@@ -4,7 +4,8 @@ import { ThemeList, VisitSummary } from '../components/blocks';
 import { VoiceNoteList } from '../components/VoiceNotes';
 import { useOverlayStep } from '../lib/useFlowStep';
 import { Avatar, PageHeader, Stars, useToast } from '../components/ui';
-import { ALEX_ID, alex, clients, providerById, providers } from '../data/load';
+import { ALEX_ID, alex, clients, providerById } from '../data/load';
+import { mailHref, telHref, tradeFromKind, tradeLabel, websiteHref } from '../lib/providers';
 import { googleCalendarUrl } from '../lib/links';
 import { averageRating } from '../lib/packet';
 import { describeSlot, slotsOnDay } from '../lib/schedule';
@@ -16,8 +17,12 @@ export function ProvidersPage() {
   const { state } = useStore();
   return (
     <div className="stack-lg">
-      <PageHeader kicker="People" title="Who comes to the apartment" lede="Maria, two dog walkers, and Lena. Sam is in the past, which is why the dog notes outlived him." />
-      {providers.map((provider) => {
+      <PageHeader kicker="People" title="Who comes to the apartment" lede="The people who already work here, plus anyone you add.">
+        {state.persona === 'customer' ? (
+          <Link className="btn" to="/providers/new">Add a provider</Link>
+        ) : null}
+      </PageHeader>
+      {state.providers.map((provider) => {
         const rating = averageRating(state.visits, provider.id);
         const next = state.visits
           .filter((visit) => visit.spId === provider.id && visit.clientId === ALEX_ID && visit.status === 'scheduled')
@@ -29,7 +34,9 @@ export function ProvidersPage() {
               <div>
                 <h2 style={{ margin: 0, fontSize: 26 }}>{provider.name}</h2>
                 <div className="muted">
-                  {kindLabel(provider.kind)} · {money(provider.rate)} · {provider.active ? 'Active' : 'Past provider'}
+                  {provider.company ? `${provider.company} · ` : ''}
+                  {tradeLabel(provider.trade ?? tradeFromKind(provider.kind))}
+                  {provider.rate ? ` · ${money(provider.rate)}` : ''} · {provider.active ? 'Active' : 'Past provider'}
                 </div>
                 {rating ? (
                   <div className="cluster">
@@ -45,9 +52,11 @@ export function ProvidersPage() {
               <Link className="btn" to={`/providers/${provider.id}`}>
                 Profile and feedback
               </Link>
-              <Link className="btn btn-ghost" to={`/messages/thread-${provider.id.replace('sp-', '')}`}>
-                Message
-              </Link>
+              {state.threads.some((thread) => thread.spId === provider.id) ? (
+                <Link className="btn btn-ghost" to={`/messages/thread-${provider.id.replace('sp-', '')}`}>
+                  Message
+                </Link>
+              ) : null}
               {provider.bookable ? (
                 <Link className="btn btn-soft" to={`/book/${provider.id}`}>
                   Book a visit
@@ -67,8 +76,8 @@ export function ProvidersPage() {
 
 export function ProviderPage() {
   const { spId = '' } = useParams();
-  const provider = providerById(spId);
   const { state } = useStore();
+  const provider = state.providers.find((person) => person.id === spId);
   if (!provider) return <PageHeader title="That provider isn’t in the demo" />;
   const visits = state.visits
     .filter((visit) => visit.spId === provider.id && visit.clientId === ALEX_ID)
@@ -77,17 +86,22 @@ export function ProviderPage() {
   return (
     <div className="stack-lg">
       <PageHeader
-        kicker={kindLabel(provider.kind)}
+        kicker={tradeLabel(provider.trade ?? tradeFromKind(provider.kind))}
         title={provider.name}
-        lede={provider.bio}
+        lede={provider.company ? `${provider.company}. ${provider.bio}` : provider.bio}
         back={{ to: '/providers', label: 'People' }}
       />
       <div className="cluster">
         {rating ? <Stars value={Math.round(rating)} /> : null}
-        <span className="chip">{money(provider.rate)} a visit</span>
-        <Link className="btn btn-small" to={`/messages/thread-${provider.id.replace('sp-', '')}`}>
-          Message
-        </Link>
+        {provider.rate ? <span className="chip">{money(provider.rate)} a visit</span> : null}
+        {state.persona === 'customer' ? (
+          <Link className="btn btn-small" to={`/providers/${provider.id}/edit`}>Edit</Link>
+        ) : null}
+        {state.threads.some((thread) => thread.spId === provider.id) ? (
+          <Link className="btn btn-small" to={`/messages/thread-${provider.id.replace('sp-', '')}`}>
+            Message
+          </Link>
+        ) : null}
         {provider.bookable ? (
           <Link className="btn btn-small btn-soft" to={`/book/${provider.id}`}>
             Book a visit
@@ -101,6 +115,16 @@ export function ProviderPage() {
           What {provider.name.split(' ')[0]} can see
         </Link>
       </div>
+      <section className="card stack">
+        <h2 style={{ margin: 0 }}>Contact</h2>
+        {provider.preferredContact ? <p className="muted" style={{ margin: 0 }}>Preferred: {provider.preferredContact}</p> : null}
+        {provider.phone ? <a className="btn" href={telHref(provider.phone)}>Call {provider.phone}</a> : <p className="muted">No phone yet.</p>}
+        {provider.preferredContact === 'text' && provider.phone ? <a className="btn btn-ghost" href={`sms:${provider.phone.replace(/\D/g, '')}`}>Text</a> : null}
+        {provider.email ? <a className="btn btn-ghost" href={mailHref(provider.email)}>Email {provider.email}</a> : null}
+        {provider.website ? <a className="btn btn-ghost" href={websiteHref(provider.website)} target="_blank" rel="noreferrer">Website</a> : null}
+        {provider.serviceArea ? <p style={{ margin: 0 }}>{provider.serviceArea}</p> : null}
+        {provider.notes ? <p style={{ margin: 0 }}>{provider.notes}</p> : null}
+      </section>
       <section className="card stack">
         <h2 style={{ margin: 0 }}>Feedback themes</h2>
         <ThemeList spId={provider.id} />

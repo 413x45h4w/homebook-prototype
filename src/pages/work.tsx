@@ -6,6 +6,7 @@ import { VoiceNoteList } from '../components/VoiceNotes';
 import { DayMap } from '../components/MapView';
 import { PageHeader } from '../components/ui';
 import { clientById, clients, providerById } from '../data/load';
+import { CalendarPage } from './calendar';
 import { googleMapsDirUrl } from '../lib/links';
 import { splitPacket } from '../lib/packet';
 import { dayLegs } from '../lib/schedule';
@@ -119,7 +120,8 @@ export function SpSchedule() {
   if (!provider) return null;
   return (
     <div className="stack-lg">
-      <PageHeader kicker="Week" title={`${provider.name.split(' ')[0]}’s next seven days`} lede="A red edge means the travel buffer between two stops doesn’t fit." />
+      <PageHeader kicker="Week" title={`${provider.name.split(' ')[0]}’s next seven days`} lede="The calendar is the schedule. A red edge on the travel week means the gap between two stops doesn’t fit." />
+      <CalendarPage providerId={provider.id} />
       <div className="week">
         {days.map((day) => {
           const visits = state.visits

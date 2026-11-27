@@ -1,6 +1,7 @@
 import { Link, useSearchParams } from 'react-router-dom';
 import { PageHeader, highlight } from '../components/ui';
 import { providerById } from '../data/load';
+import { providerSearchText } from '../lib/providers';
 import { notificationsFor, useStore } from '../lib/store';
 import { formatDayTime } from '../lib/time';
 
@@ -12,6 +13,7 @@ export function SearchPage() {
   const items = needle
     ? state.items.filter((item) => `${item.title} ${item.body}`.toLowerCase().includes(needle))
     : [];
+  const providers = needle ? state.providers.filter((provider) => providerSearchText(provider).includes(needle)) : [];
   const messages = needle
     ? state.messages.filter((message) => message.body.toLowerCase().includes(needle))
     : [];
@@ -34,6 +36,15 @@ export function SearchPage() {
       {!needle ? <p className="muted">Search the house file and every provider thread.</p> : null}
       {needle ? (
         <>
+          <section className="stack">
+            <h2 style={{ margin: 0 }}>Providers · {providers.length}</h2>
+            {providers.map((provider) => (
+              <Link key={provider.id} to={`/providers/${provider.id}`} className="card card-link">
+                <strong>{highlight(provider.name, q)}</strong>
+                <p className="muted">{highlight(`${provider.company ?? ''} ${provider.phone} ${provider.email ?? ''} ${provider.serviceArea ?? ''}`, q)}</p>
+              </Link>
+            ))}
+          </section>
           <section className="stack">
             <h2 style={{ margin: 0 }}>Knowledge base · {items.length}</h2>
             {items.map((item) => (
@@ -64,7 +75,7 @@ export function SearchPage() {
                 </div>
               );
             })}
-            {items.length + messages.length === 0 ? <p className="empty">Nothing matches “{q}”.</p> : null}
+            {items.length + messages.length + providers.length === 0 ? <p className="empty">Nothing matches “{q}”.</p> : null}
           </section>
         </>
       ) : null}

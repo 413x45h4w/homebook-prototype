@@ -1,5 +1,7 @@
 node_modules
 dist
+site
+.preview-work
 .DS_Store
 *.local
 .vite
