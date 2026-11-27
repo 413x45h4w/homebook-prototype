@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useStore } from '../lib/store';
 import { liveCaptionsAvailable, speechRecognitionCtor } from '../lib/speech';
 import { buildTicketInsert } from '../lib/feedbackSync';
-import { loadReviewQueue, readOutbox, readTesterName, retryOutbox, reviewerStatus, submitToSupabase, writeTesterName } from '../lib/feedbackRemote';
+import { loadReviewQueue, migrateLocalTickets, readOutbox, readTesterName, retryOutbox, reviewerStatus, submitToSupabase, writeTesterName } from '../lib/feedbackRemote';
 import type { FeedbackSeverity, FeedbackType } from '../lib/tickets';
 import { useResolvedFlow } from '../lib/useFlowStep';
 import { useToast } from './ui';
@@ -41,10 +41,19 @@ export function AppFeedback() {
   useEffect(() => {
     let stop = false;
     const sendQueued = async () => {
+      const earlier = await migrateLocalTickets();
+      if (stop) return;
+      if (earlier.sent > 0) {
+        const message = `Sent ${earlier.sent} earlier feedback notes`;
+        setNotice(message);
+        toast(message);
+      } else if (earlier.queued > 0) {
+        setNotice('Queued, will send');
+      }
       const result = await retryOutbox();
       if (stop) return;
       setQueued(result.left);
-      if (result.sent > 0) setNotice(result.left ? `Sent ${result.sent}. ${result.left} still queued.` : 'Sent');
+      if (earlier.sent === 0 && result.sent > 0) setNotice(result.left ? `Sent ${result.sent}. ${result.left} still queued.` : 'Sent');
     };
     void sendQueued();
     const timer = window.setInterval(() => {

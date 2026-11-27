@@ -4,6 +4,7 @@ import {
   buildTicketInsert,
   decisionRow,
   flushOutbox,
+  queueLegacyTickets,
   sendTicket,
   statusFromDecisions,
   type DecisionEvent,
@@ -78,6 +79,31 @@ describe('central feedback', () => {
     expect(flushed.outbox.map((item) => item.id)).toEqual([second.row.id]);
     expect(flushed.outbox[0].attempts).toBe(2);
     expect(retry.calls.map((call) => call.row.id)).toEqual([first.row.id, second.row.id]);
+  });
+
+  it('queues earlier local tickets once, keeping the original time and context', () => {
+    const local = {
+      id: 'tkt-old',
+      description: 'The door code note was hard to find',
+      type: 'confusing' as const,
+      createdAt: '2026-11-20T15:00:00.000Z',
+      context: { flow: 'knowledge', step: 'note-detail', screen: 'KnowledgeItem', route: '/knowledge/kb-door', role: 'customer' as const, entityIds: { id: 'kb-door' } },
+    };
+    const first = queueLegacyTickets([], [], [local], 'Samira');
+    expect(first.added).toBe(1);
+    expect(first.migratedIds).toEqual(['tkt-old']);
+    expect(first.outbox[0].localId).toBe('tkt-old');
+    expect(first.outbox[0].row.created_at).toBe('2026-11-20T15:00:00.000Z');
+    expect(first.outbox[0].row.tester_name).toBe('Samira');
+    expect(first.outbox[0].row.context).toMatchObject({
+      flow: 'knowledge',
+      originalCreatedAt: '2026-11-20T15:00:00.000Z',
+      migratedFromLocalId: 'tkt-old',
+      entityIds: { id: 'kb-door' },
+    });
+    const second = queueLegacyTickets(first.outbox, first.migratedIds, [local], 'Samira');
+    expect(second.added).toBe(0);
+    expect(second.outbox).toHaveLength(1);
   });
 
   it('appends an approve decision without erasing earlier history', () => {

@@ -19,9 +19,20 @@ export interface TicketInsert {
 
 export interface OutboxItem {
   id: string;
+  localId?: string;
   row: TicketInsert;
   attempts: number;
   lastError?: string;
+}
+
+export interface LegacyTicket {
+  id: string;
+  title?: string;
+  description: string;
+  type: FeedbackType;
+  severity?: FeedbackSeverity | null;
+  createdAt?: string;
+  context?: Record<string, unknown>;
 }
 
 export interface DecisionInsert {
@@ -145,4 +156,61 @@ export function appendDecision(events: DecisionEvent[], event: DecisionEvent): D
 export function statusFromDecisions(events: DecisionEvent[]): 'pending' | 'approved' | 'disapproved' | 'reopened' {
   const latest = events[events.length - 1];
   return latest ? latest.decision : 'pending';
+}
+
+export function legacyTicketRow(ticket: LegacyTicket, testerName: string): TicketInsert | null {
+  const description = ticket.description?.trim();
+  if (!ticket.id || !description) return null;
+  const ctx = ticket.context ?? {};
+  const createdAt = ticket.createdAt || new Date().toISOString();
+  const role = ctx.role === 'provider' ? 'provider' : 'customer';
+  const built = buildTicketInsert({
+    text: description,
+    type: ticket.type || 'other',
+    severity: ticket.severity ?? undefined,
+    testerName,
+    context: {
+      route: String(ctx.route || '/'),
+      flow: String(ctx.flow || 'unknown'),
+      step: String(ctx.step || 'unknown'),
+      screen: String(ctx.screen || 'unknown'),
+      routeFlow: String(ctx.routeFlow || ctx.flow || 'unknown'),
+      routeStep: String(ctx.routeStep || ctx.step || 'unknown'),
+      routeScreen: String(ctx.routeScreen || ctx.screen || 'unknown'),
+      overlay: typeof ctx.overlay === 'string' ? ctx.overlay : null,
+      role,
+      activeSpId: String(ctx.activeSpId || ''),
+      entityIds: (ctx.entityIds as Record<string, string>) || {},
+      viewport: String(ctx.viewport || ''),
+      device: String(ctx.device || ''),
+      appVersion: String(ctx.appVersion || 'local'),
+      commit: String(ctx.commit || 'local'),
+    },
+    now: new Date(createdAt),
+  });
+  if (!built.ok) return null;
+  const context: Record<string, unknown> = { ...ctx, originalCreatedAt: createdAt, migratedFromLocalId: ticket.id };
+  if (JSON.stringify(context).length > 19_000) delete context.device;
+  return { ...built.row, created_at: createdAt, context };
+}
+
+/** Queue pre-Supabase tickets once. Already migrated or already queued ids are skipped. */
+export function queueLegacyTickets(
+  outbox: OutboxItem[],
+  migratedIds: string[],
+  tickets: LegacyTicket[],
+  testerName: string,
+): { outbox: OutboxItem[]; migratedIds: string[]; added: number } {
+  const migrated = new Set(migratedIds);
+  const queued = new Set(outbox.map((item) => item.localId).filter((id): id is string => Boolean(id)));
+  const added: OutboxItem[] = [];
+  for (const ticket of tickets) {
+    if (!ticket?.id || migrated.has(ticket.id) || queued.has(ticket.id)) continue;
+    const row = legacyTicketRow(ticket, testerName);
+    if (!row) continue;
+    added.push({ id: row.id, localId: ticket.id, row, attempts: 0 });
+    migrated.add(ticket.id);
+    queued.add(ticket.id);
+  }
+  return { outbox: [...outbox, ...added], migratedIds: [...migrated], added: added.length };
 }

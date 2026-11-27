@@ -1,7 +1,9 @@
 import {
   decisionRow,
   flushOutbox,
+  queueLegacyTickets,
   sendTicket,
+  type LegacyTicket,
   type InsertClient,
   type OutboxItem,
   type TicketInsert,
@@ -178,22 +180,51 @@ export function localTicketsToUpload(): { id: string; row: TicketInsert }[] {
     }));
 }
 
-export async function uploadLocalTickets(): Promise<{ uploaded: number; failed: number; error?: string }> {
-  const pending = localTicketsToUpload();
-  const migrated = new Set(JSON.parse(localStorage.getItem(MIGRATED_KEY) || '[]') as string[]);
-  let uploaded = 0;
-  let failed = 0;
-  let error: string | undefined;
-  for (const item of pending) {
-    const result = await client.insert('feedback_tickets', item.row);
-    if (result.error) {
-      failed += 1;
-      error = result.error.message;
-    } else {
-      uploaded += 1;
-      migrated.add(item.id);
-    }
+let migrationRun: Promise<{ sent: number; queued: number }> | null = null;
+
+export function migrateLocalTickets(): Promise<{ sent: number; queued: number }> {
+  if (!migrationRun) {
+    migrationRun = runLegacyMigration().finally(() => {
+      migrationRun = null;
+    });
   }
-  localStorage.setItem(MIGRATED_KEY, JSON.stringify([...migrated]));
-  return { uploaded, failed, error };
+  return migrationRun;
+}
+
+async function runLegacyMigration(): Promise<{ sent: number; queued: number }> {
+  let parsed: LegacyTicket[] = [];
+  try {
+    const raw = localStorage.getItem(LOCAL_KEY);
+    parsed = raw ? (JSON.parse(raw) as LegacyTicket[]) : [];
+  } catch {
+    parsed = [];
+  }
+  const migrated = JSON.parse(localStorage.getItem(MIGRATED_KEY) || '[]') as string[];
+  const queued = queueLegacyTickets(readOutbox(), migrated, parsed, readTesterName());
+  if (!queued.added) return { sent: 0, queued: 0 };
+  writeOutbox(queued.outbox);
+  localStorage.setItem(MIGRATED_KEY, JSON.stringify(queued.migratedIds));
+  const addedIds = new Set(queued.outbox.slice(-queued.added).map((item) => item.id));
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+    return { sent: 0, queued: queued.added };
+  }
+  const flushed = await flushOutbox(client, readOutbox());
+  writeOutbox(flushed.outbox);
+  const left = new Set(flushed.outbox.map((item) => item.id));
+  let sent = 0;
+  let stillQueued = 0;
+  for (const id of addedIds) {
+    if (left.has(id)) stillQueued += 1;
+    else sent += 1;
+  }
+  return { sent, queued: stillQueued };
+}
+
+export async function uploadLocalTickets(): Promise<{ uploaded: number; failed: number; error?: string }> {
+  const result = await migrateLocalTickets();
+  return {
+    uploaded: result.sent,
+    failed: result.queued,
+    error: result.queued ? 'Queued, will send' : undefined,
+  };
 }

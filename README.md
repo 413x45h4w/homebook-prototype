@@ -71,7 +71,7 @@ Memos longer than about 10 minutes are transcribed only through the first 10. Th
 
 ## App feedback
 
-A **Feedback** tab sits on the edge of every screen, including dialogs. Testers do not sign in. A note is stored in Supabase with the flow and step. If the network fails, it stays in an outbox on this device and is sent later. Reviewers open **App feedback** in the sidebar, or `/#/review`, sign in, and approve or disapprove. Decisions are new rows, not edits. Tickets from before this change can be uploaded once from the review screen.
+A **Feedback** tab sits on the edge of every screen, including dialogs. Testers do not sign in. A note is stored in Supabase with the flow and step. If the network fails, it stays in an outbox on this device and is sent later. Reviewers open **App feedback** in the sidebar, or `/#/review`, sign in, and approve or disapprove. Decisions are new rows, not edits. Notes saved in the browser before this change are sent automatically on the next visit, with no sign-in. The review screen still has Upload my local tickets for a reviewer.
 
 ## How relevance is guessed
 
