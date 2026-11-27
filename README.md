@@ -71,7 +71,7 @@ Memos longer than about 10 minutes are transcribed only through the first 10. Th
 
 ## App feedback
 
-A **Feedback** tab sits on the edge of every screen, including dialogs. It files a note about Homebook itself (bug, idea, confusing, or other), with the current flow and step attached. Open **App feedback** in the sidebar, or **Review tickets** inside the tab, at `/#/review`. Pending tickets can be approved or disapproved; each decision is kept in the history. Export JSON or CSV, or copy approved tickets as GitHub issue markdown. Tickets stay in this browser. Collecting them across devices would need a backend.
+A **Feedback** tab sits on the edge of every screen, including dialogs. Testers do not sign in. A note is stored in Supabase with the flow and step. If the network fails, it stays in an outbox on this device and is sent later. Reviewers open **App feedback** in the sidebar, or `/#/review`, sign in, and approve or disapprove. Decisions are new rows, not edits. Tickets from before this change can be uploaded once from the review screen.
 
 ## How relevance is guessed
 

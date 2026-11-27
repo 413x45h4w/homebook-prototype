@@ -2,8 +2,9 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useStore } from '../lib/store';
 import { liveCaptionsAvailable, speechRecognitionCtor } from '../lib/speech';
-import { addAppTicket, pendingTicketCount, useAppTickets } from '../lib/ticketStore';
-import { createTicket, type FeedbackSeverity, type FeedbackType } from '../lib/tickets';
+import { buildTicketInsert } from '../lib/feedbackSync';
+import { loadReviewQueue, readOutbox, readTesterName, retryOutbox, reviewerStatus, submitToSupabase, writeTesterName } from '../lib/feedbackRemote';
+import type { FeedbackSeverity, FeedbackType } from '../lib/tickets';
 import { useResolvedFlow } from '../lib/useFlowStep';
 import { useToast } from './ui';
 
@@ -18,9 +19,11 @@ export function AppFeedback() {
   const flow = useResolvedFlow();
   const location = useLocation();
   const { state } = useStore();
-  const tickets = useAppTickets();
   const toast = useToast();
-  const pending = pendingTicketCount(tickets);
+  const [pending, setPending] = useState(0);
+  const [queued, setQueued] = useState(() => readOutbox().length);
+  const [testerName, setTesterName] = useState(() => readTesterName());
+  const [notice, setNotice] = useState('');
   const [open, setOpen] = useState(false);
   const [text, setText] = useState('');
   const [type, setType] = useState<FeedbackType>('bug');
@@ -30,6 +33,49 @@ export function AppFeedback() {
   const recognitionRef = useRef<{ stop: () => void } | null>(null);
   const textId = useId();
   const titleId = useId();
+
+  useEffect(() => {
+    writeTesterName(testerName);
+  }, [testerName]);
+
+  useEffect(() => {
+    let stop = false;
+    const sendQueued = async () => {
+      const result = await retryOutbox();
+      if (stop) return;
+      setQueued(result.left);
+      if (result.sent > 0) setNotice(result.left ? `Sent ${result.sent}. ${result.left} still queued.` : 'Sent');
+    };
+    void sendQueued();
+    const timer = window.setInterval(() => {
+      if (readOutbox().length) void sendQueued();
+    }, 20000);
+    window.addEventListener('online', sendQueued);
+    return () => {
+      stop = true;
+      window.clearInterval(timer);
+      window.removeEventListener('online', sendQueued);
+    };
+  }, []);
+
+  useEffect(() => {
+    let stop = false;
+    const countPending = async () => {
+      const who = await reviewerStatus();
+      if (stop || !who.reviewer) {
+        if (!stop) setPending(0);
+        return;
+      }
+      const queue = await loadReviewQueue();
+      if (!stop && !queue.error) setPending(queue.tickets.filter((ticket) => ticket.status === 'pending').length);
+    };
+    void countPending();
+    const timer = window.setInterval(() => void countPending(), 20000);
+    return () => {
+      stop = true;
+      window.clearInterval(timer);
+    };
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -74,11 +120,12 @@ export function AppFeedback() {
     }
   };
 
-  const submit = () => {
-    const result = createTicket({
+  const submit = async () => {
+    const built = buildTicketInsert({
       text,
       type,
       severity: severity || undefined,
+      testerName,
       context: {
         route: `${location.pathname}${location.search}`,
         flow: flow.flow,
@@ -97,15 +144,23 @@ export function AppFeedback() {
         commit: __APP_COMMIT__,
       },
     });
-    if (!result.ok) {
-      toast(result.reason);
+    if (!built.ok) {
+      setNotice(built.reason);
+      toast(built.reason);
       return;
     }
-    addAppTicket(result.ticket);
-    setText('');
-    setSeverity('');
-    setOpen(false);
-    toast('Feedback saved for review');
+    const result = await submitToSupabase(built.row);
+    setQueued(readOutbox().length);
+    if (result.status === 'sent') {
+      setNotice('Sent');
+      toast('Sent');
+      setText('');
+      setSeverity('');
+    } else {
+      const message = `Queued, will send. ${result.error ?? 'Supabase is unreachable.'}`;
+      setNotice(message);
+      toast('Queued, will send');
+    }
   };
 
   return (
@@ -132,8 +187,18 @@ export function AppFeedback() {
           </div>
           <p className="faint" style={{ margin: 0 }}>
             About {flow.flow} · {flow.step}
-            {flow.screen ? ` · ${flow.screen}` : ''}. This is about Homebook itself, not a cleaner or walker.
+            {flow.screen ? ` · ${flow.screen}` : ''}. This is about Homebook itself, not a cleaner or walker. No account needed.
           </p>
+          {notice ? (
+            <p className={notice.startsWith('Queued') ? 'notice notice-warn' : 'notice'} role="status">
+              {notice.startsWith('Queued') ? notice : notice === 'Sent' ? 'Sent' : notice}
+            </p>
+          ) : null}
+          {queued > 0 ? <p className="faint">Queued, will send · {queued}</p> : null}
+          <label className="field">
+            <span className="field-label">Your name, if you want</span>
+            <input value={testerName} maxLength={100} onChange={(event) => setTesterName(event.target.value)} placeholder="Remembered on this device" />
+          </label>
           <label className="field" htmlFor={textId}>
             <span className="field-label">What should change?</span>
             <textarea id={textId} value={text} onChange={(event) => setText(event.target.value)} placeholder="A bug, a rough step, an idea…" />

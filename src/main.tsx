@@ -8,7 +8,10 @@ import '@fontsource/outfit/600.css';
 import 'leaflet/dist/leaflet.css';
 import App from './App';
 import { selfCheck } from './lib/selfcheck';
+import { completeAuthRedirect } from './lib/supabaseClient';
 import './styles.css';
+
+void completeAuthRedirect();
 
 const root = document.getElementById('root');
 const problem = selfCheck();
