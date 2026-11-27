@@ -79,7 +79,7 @@ https://github.com/alexforshaw/homebook-prototype/raw/ticket/<short-id>/docs/tic
 https://github.com/alexforshaw/homebook-prototype/raw/ticket/<short-id>/docs/ticket-shots/<short-id>/after.png
 ```
 
-Pushing the branch runs Deploy GitHub Pages. That workflow checks out **main** for the site root and builds every existing `ticket/*` branch into `/homebook-prototype/preview/<short-id>/`. Production files change only when `main` changes.
+Pushing the branch does not deploy by itself. GitHub Pages only accepts a deploy from `main`. The push starts **Rebuild previews**, which asks **Deploy GitHub Pages** to run on `main`. That run checks out `main` for the site root and builds every existing `ticket/*` branch into `/homebook-prototype/preview/<short-id>/`. Production files change only when `main` itself changes.
 
 Preview URL:
 
@@ -144,6 +144,6 @@ POST /rest/v1/ticket_events
 }
 ```
 
-Delete the `ticket/<short-id>` branch. Deleting it triggers another Pages build so the preview path is removed. Production stays on the new `main`.
+Delete the `ticket/<short-id>` branch. Deleting it asks `main` to rebuild, which drops that preview. Production stays on the new `main`.
 
 `changes_requested` means go back to step 2 and keep the same branch. `discarded` means close the pull request, delete the branch, and stop.

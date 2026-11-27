@@ -1,0 +1,21 @@
+name: Rebuild previews
+
+on:
+  push:
+    branches:
+      - 'ticket/**'
+  delete:
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  kick:
+    if: github.event_name == 'push' || (github.event.ref_type == 'branch' && startsWith(github.event.ref, 'refs/heads/ticket/'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Rebuild main so Pages can deploy the previews
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run "Deploy GitHub Pages" --ref main --repo "${{ github.repository }}"
