@@ -5,6 +5,10 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   base: '/homebook-prototype/',
   plugins: [react()],
+  define: {
+    __APP_VERSION__: JSON.stringify(process.env.npm_package_version || '1.0.0'),
+    __APP_COMMIT__: JSON.stringify(process.env.GITHUB_SHA || 'local'),
+  },
   optimizeDeps: {
     exclude: ['@huggingface/transformers'],
   },

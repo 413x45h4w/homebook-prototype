@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { AudienceTags, KbCard, PhotoEditor, RelevanceEditor, itemBody } from '../components/blocks';
 import { VoiceFeedbackForm } from '../components/VoiceFeedbackForm';
+import { useOverlayStep } from '../lib/useFlowStep';
 import { Field, Modal, PageHeader, useToast } from '../components/ui';
 import { providerById } from '../data/load';
 import { classify } from '../lib/classify';
@@ -115,6 +116,7 @@ export function KnowledgeItem() {
   const existing = state.items.find((item) => item.id === id);
   const [draft, setDraft] = useState<KbItem>(() => existing ?? blank());
   const [confirmDelete, setConfirmDelete] = useState(false);
+  useOverlayStep(confirmDelete ? 'delete-note' : null);
   const readOnly = state.persona === 'provider';
 
   useEffect(() => {

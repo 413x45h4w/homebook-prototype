@@ -9,6 +9,7 @@ import { KnowledgeItem, KnowledgeList } from './pages/knowledge';
 import { MessagesPage, ThreadPage } from './pages/messages';
 import { BookPage, ProviderPage, ProvidersPage } from './pages/people';
 import { VisitPage, VisitsPage } from './pages/visits';
+import { ReviewPage } from './pages/review';
 import { VoicePage } from './pages/voice';
 import { SpClient, SpClients, SpGate, SpPayments, SpSchedule, SpToday } from './pages/work';
 
@@ -37,6 +38,7 @@ export default function App() {
               <Route path="/providers/:spId" element={<ProviderPage />} />
               <Route path="/search" element={<SearchPage />} />
               <Route path="/notifications" element={<NotificationsPage />} />
+              <Route path="/review" element={<ReviewPage />} />
               <Route path="/sp" element={<SpGate><SpToday /></SpGate>} />
               <Route path="/sp/schedule" element={<SpGate><SpSchedule /></SpGate>} />
               <Route path="/sp/clients" element={<SpGate><SpClients /></SpGate>} />

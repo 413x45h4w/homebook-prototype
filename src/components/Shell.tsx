@@ -4,7 +4,9 @@ import { alex, providerById, providers } from '../data/load';
 import { notificationsFor, useStore } from '../lib/store';
 import type { Persona } from '../lib/types';
 import { kindLabel } from '../lib/types';
+import { AppFeedback } from './AppFeedback';
 import { Avatar, Modal } from './ui';
+import { FlowProvider, useOverlayStep } from '../lib/useFlowStep';
 
 const CUSTOMER_NAV = [
   { to: '/', label: 'Home', glyph: '⌂', end: true },
@@ -23,6 +25,14 @@ const PROVIDER_NAV = [
 ];
 
 export function Shell() {
+  return (
+    <FlowProvider>
+      <ShellFrame />
+    </FlowProvider>
+  );
+}
+
+function ShellFrame() {
   const { state, setPersona, reset } = useStore();
   const navigate = useNavigate();
   const location = useLocation();
@@ -31,6 +41,7 @@ export function Shell() {
   }, [location.pathname]);
   const [personaOpen, setPersonaOpen] = useState(false);
   const [resetOpen, setResetOpen] = useState(false);
+  useOverlayStep(personaOpen ? 'switch-persona' : resetOpen ? 'reset-demo' : null);
   const unread = notificationsFor(state).filter((note) => !note.read).length;
   const provider = providerById(state.activeSpId);
   const nav = state.persona === 'provider' ? PROVIDER_NAV : CUSTOMER_NAV;
@@ -78,12 +89,18 @@ export function Shell() {
               <NavLink to="/packet/piano_teacher" className={({ isActive }) => `side-link${isActive ? ' active' : ''}`}>
                 Piano packet
               </NavLink>
+              <NavLink to="/review" className={({ isActive }) => `side-link${isActive ? ' active' : ''}`}>
+                App feedback
+              </NavLink>
             </>
           ) : (
             <>
               <div className="side-label">Before the job</div>
               <NavLink to="/sp/clients/client-alex" className={({ isActive }) => `side-link${isActive ? ' active' : ''}`}>
                 Alex’s packet
+              </NavLink>
+              <NavLink to="/review" className={({ isActive }) => `side-link${isActive ? ' active' : ''}`}>
+                App feedback
               </NavLink>
             </>
           )}
@@ -172,7 +189,7 @@ export function Shell() {
         <Modal title="Reset demo data" onClose={() => setResetOpen(false)}>
           <h2>Reset demo data?</h2>
           <p className="muted">
-            This clears notes, messages, bookings, and photos you’ve added in this browser and restores Alex’s apartment.
+            This clears notes, messages, bookings, and photos you’ve added in this browser and restores Alex’s apartment. App feedback tickets are kept.
           </p>
           <div className="cluster">
             <button
@@ -192,6 +209,7 @@ export function Shell() {
           </div>
         </Modal>
       ) : null}
+      <AppFeedback />
     </div>
   );
 }

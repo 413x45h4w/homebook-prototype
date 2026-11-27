@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { FeedbackEditor, PaymentBox, ProposalCard, ThemeList, VisitSummary } from '../components/blocks';
 import { VoiceFeedbackForm } from '../components/VoiceFeedbackForm';
 import { VoiceNoteList } from '../components/VoiceNotes';
+import { useOverlayStep } from '../lib/useFlowStep';
 import { Field, Modal, PageHeader, useToast } from '../components/ui';
 import { ALEX_ID, alex, clientById, providerById } from '../data/load';
 import { googleCalendarUrl, googleMapsDirUrl } from '../lib/links';
@@ -52,6 +53,7 @@ export function VisitPage() {
   const [note, setNote] = useState('Something came up — can we move this?');
   const [ask, setAsk] = useState(false);
   const [confirmCancel, setConfirmCancel] = useState(false);
+  useOverlayStep(ask ? 'reschedule-visit' : confirmCancel ? 'cancel-visit' : null);
   if (!visit) return <PageHeader title="That visit isn’t on the calendar" />;
   const provider = providerById(visit.spId);
   const client = clientById(visit.clientId);

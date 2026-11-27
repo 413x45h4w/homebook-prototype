@@ -69,6 +69,10 @@ On **Add a note** (`/#/knowledge/new`) and on a provider or visit, **Record memo
 
 Memos longer than about 10 minutes are transcribed only through the first 10. The first model download is roughly 40 MB.
 
+## App feedback
+
+A **Feedback** tab sits on the edge of every screen, including dialogs. It files a note about Homebook itself (bug, idea, confusing, or other), with the current flow and step attached. Open **App feedback** in the sidebar, or **Review tickets** inside the tab, at `/#/review`. Pending tickets can be approved or disapproved; each decision is kept in the history. Export JSON or CSV, or copy approved tickets as GitHub issue markdown. Tickets stay in this browser. Collecting them across devices would need a backend.
+
 ## How relevance is guessed
 
 [`src/lib/classify.ts`](src/lib/classify.ts) is a small classifier:

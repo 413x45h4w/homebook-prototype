@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ThemeList, VisitSummary } from '../components/blocks';
 import { VoiceNoteList } from '../components/VoiceNotes';
+import { useOverlayStep } from '../lib/useFlowStep';
 import { Avatar, PageHeader, Stars, useToast } from '../components/ui';
 import { ALEX_ID, alex, clients, providerById, providers } from '../data/load';
 import { googleCalendarUrl } from '../lib/links';
@@ -131,6 +132,7 @@ export function BookPage() {
   const navigate = useNavigate();
   const toast = useToast();
   const [picked, setPicked] = useState<{ start: string; end: string } | null>(null);
+  useOverlayStep(picked ? 'book-confirm' : null);
   const [requestDate, setRequestDate] = useState(() => localDateInput(upcomingDays(2)[1]));
   const [requestTimeValue, setRequestTimeValue] = useState('09:00');
   const [requestNote, setRequestNote] = useState('Could we find a time outside the usual grid?');

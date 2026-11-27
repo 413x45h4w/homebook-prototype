@@ -8,6 +8,7 @@ import { useStore } from '../lib/store';
 import { CATEGORIES, type CategoryId } from '../lib/types';
 import { createVoiceFeedback, isAudioFile, pickRecorderMime } from '../lib/voiceFeedback';
 import { providers } from '../data/load';
+import { useOverlayStep } from '../lib/useFlowStep';
 import { Field, Stars, useToast } from './ui';
 
 const MAX_RECORD_SEC = 10 * 60;
@@ -43,6 +44,7 @@ export function VoiceFeedbackForm({
   const [clip, setClip] = useState<HeldClip | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  useOverlayStep(phase === 'recording' ? 'voice-record' : phase === 'transcribing' ? 'voice-transcribe' : clip ? 'voice-review' : null);
 
   const recorderRef = useRef<MediaRecorder | null>(null);
   const recognitionRef = useRef<BrowserSpeechRecognition | null>(null);
