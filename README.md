@@ -63,6 +63,12 @@ Switch persona to **Jordan Hale**.
 5. **Inbox.** Jordan has a pending request for an extra evening walk (so the pill happens). Accept it, or send other open times. Alex can accept those from the customer side.
 6. Switch to **Maria** to see her own conflict (Brooklyn Heights → Upper West Side) and her unpaid visits. Switch to **Sam** to see a past provider with history and no booking calendar. Switch to **Lena** for Thursday lessons.
 
+## Voice notes
+
+On **Add a note** (`/#/knowledge/new`) and on a provider or visit, **Record memo** captures audio in the browser and, where the browser supports it (Chrome, Edge, Safari), fills the transcript live with the Web Speech API. **Upload voice memo** takes an m4a, mp3, wav, or webm file, including an iPhone Voice Memo. If live captions aren’t available (Firefox, or a blocked microphone), **Transcribe on this device** runs Whisper Tiny in the browser via Transformers.js. The model downloads once from Hugging Face; nothing is sent to a paid API. You edit the transcript, pick the provider, and optionally add a rating or category. The clip stays in this browser (IndexedDB) with a play button, and the note is marked Voice on that provider’s page. Notes are append-only.
+
+Memos longer than about 10 minutes are transcribed only through the first 10. The first model download is roughly 40 MB.
+
 ## How relevance is guessed
 
 [`src/lib/classify.ts`](src/lib/classify.ts) is a small classifier:

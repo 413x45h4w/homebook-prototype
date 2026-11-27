@@ -106,6 +106,7 @@ export function CustomerHome() {
       <section className="card stack">
         <h2 style={{ margin: 0 }}>Try the demo</h2>
         <div className="stack">
+          <Link to="/knowledge/new#voice">Leave Maria a voice note. Record, or upload a memo, then send the transcript as feedback.</Link>
           <Link to="/knowledge/kb-laundry">Open the laundry note and read why Jordan never sees it.</Link>
           <Link to="/knowledge/kb-quiet">Open quiet hours — it mentions the vacuum and still goes to everyone.</Link>
           <Link to="/messages/thread-jordan?message=msg-jordan-4">Save the unfiled instruction in Jordan’s thread.</Link>

@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { clearClips } from './audioStore';
 import { classify } from './classify';
 import { itemText } from './packet';
+import { appendVoiceFeedback, type VoiceFeedback } from './voiceFeedback';
 import { travelProblem } from './schedule';
 import { formatRange, uid } from './time';
 import type {
@@ -50,6 +52,7 @@ export interface StoreApi {
   sendPacket: (input: { kind: SpKind; recipientName: string; note: string; itemIds: string[] }) => string;
   markNotificationRead: (id: string) => void;
   markAllNotificationsRead: () => void;
+  addVoiceFeedback: (note: VoiceFeedback) => void;
 }
 
 const StoreContext = createContext<StoreApi | null>(null);
@@ -98,6 +101,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     return {
       reset: () => {
         localStorage.removeItem(STORAGE_KEY);
+        void clearClips().catch(() => undefined);
         const next = freshState();
         ref.current = next;
         setState(next);
@@ -591,6 +595,22 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           return {
             ...current,
             notifications: current.notifications.map((note) => (visible.has(note.id) ? { ...note, read: true } : note)),
+          };
+        });
+      },
+      addVoiceFeedback: (note) => {
+        update((current) => {
+          const provider = providerById(note.spId);
+          return {
+            ...current,
+            voiceNotes: appendVoiceFeedback(current.voiceNotes, note),
+            notifications: pushNote(current, {
+              persona: 'provider',
+              spId: note.spId,
+              title: 'Alex left a voice note',
+              body: `${provider?.name ?? 'A provider'} · ${clip(note.transcript)}`,
+              href: `/providers/${note.spId}`,
+            }),
           };
         });
       },

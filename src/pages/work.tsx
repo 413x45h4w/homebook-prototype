@@ -1,6 +1,7 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { KbCard, PaymentBox, VisitSummary } from '../components/blocks';
+import { VoiceNoteList } from '../components/VoiceNotes';
 import { DayMap } from '../components/MapView';
 import { PageHeader } from '../components/ui';
 import { clientById, clients, providerById } from '../data/load';
@@ -210,6 +211,12 @@ export function SpClient() {
           <p className="muted">A full household file is in the demo for Alex Chen.</p>
         </div>
       )}
+      {client.fullKnowledgeBase ? (
+        <section className="stack">
+          <h2 style={{ margin: 0 }}>Voice notes from Alex</h2>
+          <VoiceNoteList notes={state.voiceNotes.filter((note) => note.spId === provider.id)} />
+        </section>
+      ) : null}
       <section className="stack">
         <h2 style={{ margin: 0 }}>Visits</h2>
         {visits.map((visit) => (

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { AudienceTags, KbCard, PhotoEditor, RelevanceEditor, itemBody } from '../components/blocks';
+import { VoiceFeedbackForm } from '../components/VoiceFeedbackForm';
 import { Field, Modal, PageHeader, useToast } from '../components/ui';
 import { providerById } from '../data/load';
 import { classify } from '../lib/classify';
@@ -141,6 +142,9 @@ export function KnowledgeItem() {
         title={isNew ? 'New note' : draft.title || 'Untitled note'}
         back={{ to: '/knowledge', label: 'Knowledge base' }}
       />
+      {isNew && !readOnly ? (
+        <VoiceFeedbackForm heading="Say it, then send it as feedback" />
+      ) : null}
       {readOnly ? (
         <div className="notice">You’re viewing Alex’s note as a provider. Switch persona to Alex to edit it.</div>
       ) : null}

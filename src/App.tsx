@@ -9,6 +9,7 @@ import { KnowledgeItem, KnowledgeList } from './pages/knowledge';
 import { MessagesPage, ThreadPage } from './pages/messages';
 import { BookPage, ProviderPage, ProvidersPage } from './pages/people';
 import { VisitPage, VisitsPage } from './pages/visits';
+import { VoicePage } from './pages/voice';
 import { SpClient, SpClients, SpGate, SpPayments, SpSchedule, SpToday } from './pages/work';
 
 export default function App() {
@@ -21,6 +22,8 @@ export default function App() {
               <Route path="/" element={<HomeSwitch />} />
               <Route path="/knowledge" element={<KnowledgeList />} />
               <Route path="/knowledge/new" element={<KnowledgeItem />} />
+              <Route path="/voice" element={<VoicePage />} />
+              <Route path="/voice/:spId" element={<VoicePage />} />
               <Route path="/knowledge/:id" element={<KnowledgeItem />} />
               <Route path="/packet/:kind" element={<PacketPage />} />
               <Route path="/share" element={<SharePage />} />

@@ -235,6 +235,7 @@ export function freshState(): State {
     notifications: buildNotifications(),
     sentPackets: buildPackets(),
     dismissedOffers: [],
+    voiceNotes: [],
   };
 }
 
@@ -244,6 +245,7 @@ export function loadState(): State {
     if (!raw) return freshState();
     const parsed = JSON.parse(raw) as State;
     if (!parsed || parsed.version !== STATE_VERSION || !Array.isArray(parsed.items)) return freshState();
+    if (!Array.isArray(parsed.voiceNotes)) parsed.voiceNotes = [];
     return parsed;
   } catch {
     return freshState();

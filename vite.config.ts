@@ -5,6 +5,9 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   base: '/homebook-prototype/',
   plugins: [react()],
+  optimizeDeps: {
+    exclude: ['@huggingface/transformers'],
+  },
   server: { host: '0.0.0.0', port: 5173 },
   preview: { host: '0.0.0.0', port: 4173 },
 });

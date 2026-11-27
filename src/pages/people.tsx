@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ThemeList, VisitSummary } from '../components/blocks';
+import { VoiceNoteList } from '../components/VoiceNotes';
 import { Avatar, PageHeader, Stars, useToast } from '../components/ui';
 import { ALEX_ID, alex, clients, providerById, providers } from '../data/load';
 import { googleCalendarUrl } from '../lib/links';
@@ -102,6 +103,16 @@ export function ProviderPage() {
       <section className="card stack">
         <h2 style={{ margin: 0 }}>Feedback themes</h2>
         <ThemeList spId={provider.id} />
+      </section>
+      <section className="stack">
+        <div className="split">
+          <h2 style={{ margin: 0 }}>Voice notes</h2>
+          <Link className="btn btn-small" to={`/voice/${provider.id}`}>
+            Leave a voice note
+          </Link>
+        </div>
+        <p className="muted">Append-only. Each memo keeps the time it was sent.</p>
+        <VoiceNoteList notes={state.voiceNotes.filter((note) => note.spId === provider.id)} />
       </section>
       <section className="stack">
         <h2 style={{ margin: 0 }}>Visits with Alex</h2>

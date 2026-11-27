@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { FeedbackEditor, PaymentBox, ProposalCard, ThemeList, VisitSummary } from '../components/blocks';
+import { VoiceFeedbackForm } from '../components/VoiceFeedbackForm';
+import { VoiceNoteList } from '../components/VoiceNotes';
 import { Field, Modal, PageHeader, useToast } from '../components/ui';
 import { ALEX_ID, alex, clientById, providerById } from '../data/load';
 import { googleCalendarUrl, googleMapsDirUrl } from '../lib/links';
@@ -120,14 +122,18 @@ export function VisitPage() {
       <section className="card stack">
         <h2 style={{ margin: 0 }}>Feedback</h2>
         {visit.status === 'cancelled' ? <p className="muted">Cancelled visits don’t take feedback.</p> : <FeedbackEditor visit={visit} />}
-        {state.persona === 'customer' ? (
-          <div>
-            <h3>Themes across {provider.name.split(' ')[0]}’s visits</h3>
-            <ThemeList spId={provider.id} />
-            <Link to={`/providers/${provider.id}`}>Open the full timeline</Link>
-          </div>
-        ) : null}
+        <VoiceNoteList notes={state.voiceNotes.filter((note) => note.visitId === visit.id)} />
       </section>
+      {state.persona === 'customer' && visit.status !== 'cancelled' ? (
+        <VoiceFeedbackForm spId={visit.spId} visitId={visit.id} heading="Voice feedback for this visit" />
+      ) : null}
+      {state.persona === 'customer' ? (
+        <section className="card stack">
+          <h2 style={{ margin: 0 }}>Themes across {provider.name.split(' ')[0]}’s visits</h2>
+          <ThemeList spId={provider.id} />
+          <Link to={`/providers/${provider.id}`}>Open the full timeline</Link>
+        </section>
+      ) : null}
       {state.persona === 'provider' ? (
         <section className="stack">
           <h2 style={{ margin: 0 }}>What to know before you arrive</h2>

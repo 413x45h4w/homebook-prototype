@@ -178,6 +178,22 @@ export interface State {
   notifications: AppNotification[];
   sentPackets: SentPacket[];
   dismissedOffers: string[];
+  voiceNotes: VoiceFeedback[];
+}
+
+export interface VoiceFeedback {
+  id: string;
+  kind: 'voice';
+  spId: string;
+  visitId?: string;
+  createdAt: string;
+  transcript: string;
+  rating?: number;
+  category?: CategoryId;
+  audioId: string;
+  mimeType: string;
+  durationSec?: number;
+  source: 'recording' | 'upload';
 }
 
 export const THEME_SUGGESTIONS = [
